@@ -1,7 +1,7 @@
 import { Item } from "../models/item";
 import { Request, Response } from "express";
 
-export const createItem = async (req: Request, res: Response): Promise<Response> => {
+export const createItem = async (req: Request, res: Response): Promise<Response> => {  
   try {
     const { name, description, price, pic, duration } = req.body;
 
@@ -10,7 +10,7 @@ export const createItem = async (req: Request, res: Response): Promise<Response>
         .status(400)
         .json({ message: "Name, description, and duration are required" });
     }
-
+    
     const newItem = await Item.create({
       name,
       description,
@@ -18,6 +18,7 @@ export const createItem = async (req: Request, res: Response): Promise<Response>
       pic,
       duration,
     });
+    console.log(newItem);
 
     return res.status(201).json({
       message: "Item created successfully",
