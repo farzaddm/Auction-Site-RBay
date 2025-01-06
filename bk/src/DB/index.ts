@@ -1,6 +1,6 @@
 import { sequelize } from "./sequelize";
 
-async function main() {
+export async function syncDatabase() {
   try {
     await sequelize.sync({ force: true }); // Use `force: true` for development to drop and recreate tables
     console.log("Database synchronized successfully!");
@@ -9,4 +9,3 @@ async function main() {
   }
 }
 
-main();
