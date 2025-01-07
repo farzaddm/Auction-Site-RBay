@@ -22,7 +22,7 @@ const sequelize = new Sequelize({
 
 export const syncDatabase = async() => {
   try {
-    await sequelize.sync({ force: true }); // Use `force: true` for development to drop and recreate tables
+    await sequelize.sync({ alter: true }); // Use `alter: true` to create tables just if they are not already exists
     console.log("Database synchronized successfully!");
   } catch (error) {
     console.error("Failed to synchronize database:", error);

@@ -18,7 +18,6 @@ export const createItem = async (req: Request, res: Response): Promise<Response>
       pic,
       duration,
     });
-    console.log(newItem);
 
     return res.status(201).json({
       message: "Item created successfully",
