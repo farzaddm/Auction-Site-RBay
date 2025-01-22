@@ -5,7 +5,10 @@
   "main": "index.js",
   "scripts": {
     "start": "nodemon --watch bk --ext ts --exec ts-node bk/index.ts",
-    "start db": "bk/src/DB/index.ts"
+    "start db": "bk/src/DB/index.ts",
+    "pretest": "node -e \"require('fs').mkdirSync('bk/coverage', { recursive: true })\"",
+    "test": "jest --coverage --config bk/jest.config.js",
+    "test:coverage": "jest --coverage"
   },
   "author": "",
   "license": "ISC",
@@ -27,5 +30,8 @@
     "ts-jest": "^29.2.5",
     "ts-node": "^10.9.2",
     "typescript": "^5.7.2"
+  },
+  "jest": {
+    "coverageDirectory": "./bk/coverage"
   }
 }
