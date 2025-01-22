@@ -1,5 +1,7 @@
 import { Item } from "../models/item";
 import { Request, Response } from "express";
+import { User } from "../models/user";
+import { Like } from "../models/like";
 
 export const createItem = async (req: Request, res: Response): Promise<Response> => {  
   try {
@@ -63,4 +65,35 @@ export const getItemsByDuration = async (req: Request, res: Response): Promise<R
   }
 };
 
+export const likeItem = async (req: Request, res: Response) => {
+  const { userId, itemId } = req.body;
+  console.log(userId, itemId);
 
+  
+
+  try {
+    const item = await Item.findByPk(itemId);
+    if (!item) {
+      return res.status(404).json({ message: 'Item not found' });
+    }
+
+    const user = await User.findByPk(userId);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    const like = await Like.findOne({
+      where: { userId, itemId },
+    });
+
+    if (like) {
+      await like.destroy();
+      return res.status(200).json({ message: 'Item unliked successfully' });
+    } else {
+      await Like.create({ userId, itemId });
+      return res.status(201).json({ message: 'Item liked successfully' });
+    }
+  } catch (error: any) {
+    return res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};

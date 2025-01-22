@@ -11,7 +11,7 @@ export class User extends Model {
   @Column({ type: DataType.STRING, allowNull: false })
   password!: string;
 
-  @Column({ type: DataType.STRING, allowNull: false, unique: true })
+  @Column({ type: DataType.STRING, allowNull: false, unique: true, validate: { isEmail: true } })
   email!: string;
 
   @Column({ type: DataType.STRING, allowNull: true })
