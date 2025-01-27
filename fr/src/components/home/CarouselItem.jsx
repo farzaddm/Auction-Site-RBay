@@ -1,7 +1,7 @@
 import { Button, Card, Image, Text } from "@chakra-ui/react"
 
 function CarouselItem({ image, expireDate, title, price }) {
-  return <Card.Root w={250} flex="0 0 auto" userSelect="none" boxShadow="md" border="none" backgroundColor="whiteAlpha.100" >
+  return <Card.Root w={250} flex="0 0 auto" userSelect="none" boxShadow="md" border="none" backgroundColor="blackAlpha.900" >
     <Image src={image} alt={title} borderTopRightRadius="md" borderTopLeftRadius="md" />
     <Card.Body gap="2">
       <Card.Title>{title}</Card.Title>
