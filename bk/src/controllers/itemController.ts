@@ -1,9 +1,10 @@
-import { Item } from "../models/item";
 import { Request, Response } from "express";
+import { Op, literal } from "sequelize";
+import { Item } from "../models/item";
 import { User } from "../models/user";
 import { Like } from "../models/like";
 import { View } from "../models/view";
-import { Op, literal } from "sequelize";
+import { Bid } from "../models/bid";
 
 export const createItem = async (req: Request, res: Response): Promise<Response> => {  
   try {
@@ -118,6 +119,65 @@ export const viewItem = async (req: Request, res: Response) => {
   }
 };
 
+export const bidOnItem = async (req: Request, res: Response): Promise<Response> => {
+  const { userId, itemId, bidAmount } = req.body;
+
+  try {
+    const item = await Item.findByPk(itemId);
+    if (!item) {
+      return res.status(404).json({ message: 'Item not found' });
+    }
+
+    const user = await User.findByPk(userId);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    
+    if (parseInt(bidAmount) <= item.price) {
+      return res.status(400).json({ message: 'Bid amount must be higher than current price' });
+    }
+
+    item.price = bidAmount;
+    await item.save();
+    
+    const newBid = await Bid.create({
+      user_id: userId,
+      item_id: itemId,
+      bid_amount: bidAmount,
+    });
+
+    return res.status(200).json({ message: 'Bid placed successfully', data: newBid });
+  } catch (error: any) {
+    console.error(error);
+    return res.status(500).json({ message: 'Server error, could not place bid', error: error.message });
+  }
+};
+
+export const getBidHistory = async (req: Request, res: Response): Promise<Response> => {
+  const { itemId } = req.params;
+
+  console.log(itemId);
+
+  try {
+    const item = await Item.findByPk(itemId);
+    if (!item) {
+      return res.status(404).json({ message: 'Item not found' });
+    }
+
+    const bids = await Bid.findAll({
+      where: { itemId },
+      order: [['createdAt', 'DESC']]
+    });
+
+    return res.status(200).json({
+      message: 'Bid history retrieved successfully',
+      data: bids,
+    });
+  } catch (error: any) {
+    console.error(error);
+    return res.status(500).json({ message: 'Server error, could not retrieve bid history', error: error.message });
+  }
+};
 // get items by sort
 export const getItemsByPrice = async (req: Request, res: Response): Promise<Response> => {
   try {
