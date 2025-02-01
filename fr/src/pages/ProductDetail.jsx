@@ -113,7 +113,7 @@ function ProductDetail() {
       </Box>
     </Flex>
 
-    {/* <Chart /> */}
+    <Chart />
 
   </Box>
 }
