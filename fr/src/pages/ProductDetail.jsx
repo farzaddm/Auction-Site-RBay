@@ -1,4 +1,4 @@
-import { Badge, BlockquoteIcon, Box, Button, Card, Flex, Float, Group, HStack, Icon, Image, LinkBox, Skeleton, Span, Text } from "@chakra-ui/react"
+import { Badge, BlockquoteIcon, Box, Button, Card, defineStyle, Field, Flex, Float, Group, HStack, Icon, Image, Input, LinkBox, Skeleton, Span, Text } from "@chakra-ui/react"
 import { FaRegHeart, FaHeart } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { Avatar } from "../components/ui/avatar";
@@ -22,7 +22,7 @@ function ProductDetail() {
             objectFit="cover"
             width="full"
             height="full"
-            src="https://images.unsplash.com/photo-1667489022797-ab608913feeb?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHw5fHx8ZW58MHx8fHw%3D&auto=format&fit=crop&w=6000&q=60"
+            src="/test.jpg"
             alt="Caffe Latte"
           />
         </Skeleton>
@@ -98,12 +98,44 @@ function ProductDetail() {
           <Badge>Hot</Badge>
           <Badge>Caffeine</Badge>
         </HStack>
+
+        <Flex marginTop={6} direction={{base:"row", xl:"row", mdToXl:"row", md:"column", mdDown:"column"}} gap={2} width={"50%"} justifyContent={"left"} alignItems={"left"}>
+          <Field.Root>
+            <Box pos="relative" w={{base:"80%", xl:"80%", mdToXl:"80%", md:"100%", mdDown:"100%"}}>
+              <Input className="peer" borderColor={"whiteAlpha.700"} placeholder="" type="number" />
+              <Field.Label css={floatingStyles}>Place a Bid</Field.Label>
+            </Box>
+          </Field.Root>
+
+          <Button maxW={20}>Submit</Button>
+        </Flex>
+
       </Box>
     </Flex>
 
-    <Chart />
+    {/* <Chart /> */}
 
   </Box>
 }
 
+const floatingStyles = defineStyle({
+  pos: "absolute",
+  bg: "bg",
+  px: "0.5",
+  top: "-3",
+  insetStart: "2",
+  fontWeight: "normal",
+  pointerEvents: "none",
+  transition: "position",
+  _peerPlaceholderShown: {
+    color: "fg.muted",
+    top: "2.5",
+    insetStart: "3",
+  },
+  _peerFocusVisible: {
+    color: "fg",
+    top: "-3",
+    insetStart: "2",
+  },
+})
 export default ProductDetail
