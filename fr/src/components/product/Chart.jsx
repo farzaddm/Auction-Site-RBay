@@ -1,6 +1,14 @@
-import { Box, Button } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
-import { LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip, Legend } from "recharts";
+import { Box, Button } from '@chakra-ui/react';
+import { useEffect, useState } from 'react';
+import {
+  LineChart,
+  Line,
+  CartesianGrid,
+  XAxis,
+  YAxis,
+  Tooltip,
+  Legend,
+} from 'recharts';
 
 function Chart() {
   const [screenWidth, setScreenWidth] = useState(window.innerWidth);
@@ -8,19 +16,20 @@ function Chart() {
   useEffect(() => {
     const handleResize = () => setScreenWidth(window.innerWidth);
 
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
   }, []);
 
   const data = [
-    { name: "Jan", sales: 1000 },
-    { name: "Ali", sales: 6000 },
-    { name: "Reza", sales: 2000 },
-    { name: "Ahmad", sales: 5000 },
+    { name: 'Jan', sales: 1000 },
+    { name: 'Ali', sales: 6000 },
+    { name: 'Reza', sales: 2000 },
+    { name: 'Ahmad', sales: 5000 },
   ];
 
   return (
     <Box
+      shadow="md"
       width="full"
       backgroundColor="blackAlpha.700"
       p={10}

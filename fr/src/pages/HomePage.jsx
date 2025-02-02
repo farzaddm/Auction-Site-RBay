@@ -9,5 +9,5 @@ export default function HomePage() {
       <Carousel />
       <Feature />
     </>
-  )
+  );
 }
