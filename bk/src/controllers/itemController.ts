@@ -56,7 +56,7 @@ export const getItemById = async (req: Request, res: Response): Promise<Response
 };
 
 
-export const likeItem = async (req: Request, res: Response) => {
+export const likeItem = async (req: Request, res: Response): Promise<Response> => {
   const { userId, itemId } = req.body;
   console.log(userId, itemId);
   
@@ -89,7 +89,7 @@ export const likeItem = async (req: Request, res: Response) => {
   }
 };
 
-export const viewItem = async (req: Request, res: Response) => {
+export const viewItem = async (req: Request, res: Response): Promise<Response> => {
   const { userId, itemId } = req.body;
 
   try {
