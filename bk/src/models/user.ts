@@ -1,9 +1,17 @@
-import { Table, Column, Model, DataType, HasMany } from "sequelize-typescript";
+import { Table, Column, Model, DataType, HasMany, BelongsToMany } from "sequelize-typescript";
 import { Bid } from "./bid";
 import { View } from "./view";
 import { Like } from "./like";
+import { Follow } from "./follow";
 
-@Table
+@Table({
+  indexes: [
+    {
+      unique: true,
+      fields: ['email']
+    }
+  ]
+})
 export class User extends Model {
   @Column({ type: DataType.STRING, allowNull: false })
   name!: string;
@@ -37,4 +45,10 @@ export class User extends Model {
 
   @HasMany(() => Like)
   likes!: Like[];
+
+  @BelongsToMany(() => User, () => Follow, 'followerId', 'followingId')
+  followings!: User[];
+
+  @BelongsToMany(() => User, () => Follow, 'followingId', 'followerId')
+  followers!: User[];
 }
