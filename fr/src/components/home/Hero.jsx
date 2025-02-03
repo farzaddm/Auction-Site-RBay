@@ -26,7 +26,7 @@ function Hero() {
             RBay Auctions
           </Text>
         </Heading>
-        <Text color={'gray.500'} marginBottom={"2rem"}>
+        <Text color={'gray.500'} marginBottom={"2rem"} px={{base:0, lg:40}}>
           Discover unique items and bid on products you love. Join our community of auction enthusiasts
           and win incredible deals on a wide range of products. Start bidding today!
         </Text>

@@ -1,62 +1,198 @@
-import { Box, Button, Flex, Heading, Text } from '@chakra-ui/react';
-import { Avatar } from '../components/ui/avatar';
-import UserProducts from '../components/user/UserProducts';
+import { Box, Button, Heading, Icon, Kbd, Table, Text } from '@chakra-ui/react';
+import {
+  ActionBarCloseTrigger,
+  ActionBarContent,
+  ActionBarRoot,
+  ActionBarSelectionTrigger,
+  ActionBarSeparator,
+} from '../components/ui/action-bar';
+import { Checkbox } from '../components/ui/checkbox';
+import { useState } from 'react';
+import { Link } from 'react-router-dom';
+import { FaRegTrashAlt } from 'react-icons/fa';
 
 function UserDashboard() {
-  return (
-    <Box width={'80%'} minH={'100vh'} mx={'auto'} paddingTop={100}>
-      <Box
-        width={'100%'}
-        backgroundColor={'green.50/50'}
-        minHeight={'80vh'}
-        rounded={10}
-        shadow="md"
-        p={{base:5, md:10}}
-      >
-        <Flex
-          direction={{ base: 'column', md: 'column', lg: 'row' }}
-          gap={10}
-          backgroundColor={'cyan.950/70'}
-          minHeight="70vh"
-          p={{base:5, md:10}}
-          rounded="md"
+  const [selection, setSelection] = useState([]);
+
+  const indeterminate = selection.length > 0 && selection.length < items.length;
+
+  const rows = items.map((item) => (
+    <Table.Row
+      backgroundColor={'teal.950/60'}
+      key={item.name}
+      data-selected={selection.includes(item.name) ? '' : undefined}
+    >
+      <Table.Cell>
+        <Checkbox
+          _hover={{ cursor: 'pointer' }}
+          colorPalette="gray"
+          variant="solid"
+          backgroundColor="whiteAlpha.300"
+          rounded={3}
+          top="1"
+          aria-label="Select row"
+          checked={selection.includes(item.name)}
+          onCheckedChange={(changes) => {
+            setSelection((prev) =>
+              changes.checked
+                ? [...prev, item.name]
+                : selection.filter((name) => name !== item.name)
+            );
+          }}
+        />
+      </Table.Cell>
+      <Table.Cell>{item.name}</Table.Cell>
+      <Table.Cell>${item.price}</Table.Cell>
+      <Table.Cell>{item.timeLeft}</Table.Cell>
+      <Table.Cell>{item.bids}</Table.Cell>
+      <Table.Cell>{item.views}</Table.Cell>
+      <Table.Cell>{item.likes}</Table.Cell>
+      <Table.Cell>
+        <Button
+          m={0}
+          variant="subtle"
+          p={2}
+          backgroundColor={'whiteAlpha.200'}
+          _hover={{ backgroundColor: 'whiteAlpha.400' }}
         >
-          <Flex
-            direction={'column'}
-            width={{base:'100%', lg:"40%", md:"100%"}}
-          >
-            <Flex pl={3} pb={7} direction="row" gap={3}>
-              <Avatar
-                mt={2}
-                name="ali rezaei"
-                src="http://bit.ly/broken-link"
-                shadow="xs"
-              />
-              <Box>
-                <Heading fontWeight={'bolder'}>Ali Rezaei</Heading>
-                <Text fontWeight={'light'}>@Ali_Rezaei</Text>
-              </Box>
-            </Flex>
+          <Link to={item.link}>View</Link>
+        </Button>
+      </Table.Cell>
+    </Table.Row>
+  ));
 
-            <Text pr={4} textAlign={'left'}>
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Esse sunt
-              eligendi natus, voluptatem quos vero asperiores repudiandae nulla
-              iure minus iste obcaecati dolore, fugit sit velit, nemo
-              aspernatur! Vero iste quam sed consequatur, ex eius quos sint non
-              mollitia neque adipisci omnis suscipit expedita nulla enim beatae?
-              Ea nesciunt quasi cum perspiciatis omnis.
-            </Text>
+  return (
+    <Box
+      width={{ base: '95%', md: '80%' }}
+      pt={'8rem'}
+      minH={'95vh'}
+      mx={'auto'}
+    >
+      <Box
+        p={{ base: 3, md: 5 }}
+        rounded={8}
+        shadow="md"
+        backgroundColor={'gray.600/60'}
+        overflowX={'auto'}
+      >
+        <Heading textAlign={'left'} p={5}>
+          Your Dashboard
+        </Heading>
+        <Table.Root
+          width={'100%'}
+          rounded={4}
+          variant="outline"
+          striped
+          size="lg"
+          interactive="true"
+        >
+          <Table.Header backgroundColor={'teal.700/80'}>
+            <Table.Row>
+              <Table.ColumnHeader w="6">
+                <Checkbox
+                  _hover={{ cursor: 'pointer' }}
+                  colorPalette="gray"
+                  backgroundColor="blackAlpha.500"
+                  top="1"
+                  aria-label="Select all rows"
+                  checked={
+                    indeterminate ? 'indeterminate' : selection.length > 0
+                  }
+                  onCheckedChange={(changes) => {
+                    setSelection(
+                      changes.checked ? items.map((item) => item.name) : []
+                    );
+                  }}
+                />
+              </Table.ColumnHeader>
+              <Table.ColumnHeader>Name</Table.ColumnHeader>
+              <Table.ColumnHeader>Price</Table.ColumnHeader>
+              <Table.ColumnHeader>Time left</Table.ColumnHeader>
+              <Table.ColumnHeader>Bids</Table.ColumnHeader>
+              <Table.ColumnHeader>Views</Table.ColumnHeader>
+              <Table.ColumnHeader>Likes</Table.ColumnHeader>
+              <Table.ColumnHeader>Link</Table.ColumnHeader>
+            </Table.Row>
+          </Table.Header>
+          <Table.Body>{rows}</Table.Body>
+        </Table.Root>
 
-            <Button variant="surface" maxW={20} mt={10}>
-              Follow
+        <ActionBarRoot open={selection.length}>
+          <ActionBarContent backgroundColor="blackAlpha.800/100">
+            <ActionBarSelectionTrigger>
+              {selection.length} selected
+            </ActionBarSelectionTrigger>
+            <ActionBarSeparator />
+            <Button
+              colorPalette="white"
+              backgroundColor={'red.focusRing'}
+              variant="outline"
+              size="sm"
+            >
+              <Icon>
+                <FaRegTrashAlt />
+              </Icon>
+              <Text>Delete</Text>
             </Button>
-          </Flex>
-
-          <UserProducts />
-        </Flex>
+            <ActionBarCloseTrigger onClick={() => setSelection([])} />
+          </ActionBarContent>
+        </ActionBarRoot>
       </Box>
     </Box>
   );
 }
+
+const items = [
+  {
+    id: 1,
+    name: 'Laptop',
+    price: 999.99,
+    timeLeft: '4 days',
+    bids: 3,
+    views: 0,
+    likes: 2,
+    link: 'https://google.com',
+  },
+  {
+    id: 2,
+    name: 'Coffee Maker',
+    price: 49.99,
+    timeLeft: '5 days',
+    bids: 3,
+    views: 0,
+    likes: 2,
+    link: 'https://google.com',
+  },
+  {
+    id: 3,
+    name: 'Desk Chair',
+    price: 150.0,
+    timeLeft: '1 week',
+    bids: 3,
+    views: 0,
+    likes: 2,
+    link: 'https://google.com',
+  },
+  {
+    id: 4,
+    name: 'Smartphone',
+    price: 799.99,
+    timeLeft: 'Expired',
+    bids: 3,
+    views: 0,
+    likes: 2,
+    link: 'https://google.com',
+  },
+  {
+    id: 5,
+    name: 'Headphones',
+    price: 199.99,
+    timeLeft: 'Expired',
+    bids: 3,
+    views: 0,
+    likes: 2,
+    link: 'https://google.com',
+  },
+];
 
 export default UserDashboard;

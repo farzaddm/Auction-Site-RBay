@@ -3,6 +3,7 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import HomePage from './pages/HomePage';
 import Layout from './pages/Layout';
 import ProductDetail from './pages/ProductDetail';
+import UserProfile from './pages/UserProfile';
 import UserDashboard from './pages/UserDashboard';
 
 const router = createBrowserRouter([
@@ -19,6 +20,10 @@ const router = createBrowserRouter([
       },
       {
         path: 'user',
+        element: <UserProfile />,
+      },
+      {
+        path: 'dashboard',
         element: <UserDashboard />,
       },
     ],
