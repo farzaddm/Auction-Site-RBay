@@ -1,6 +1,6 @@
 import express from "express";
-import itemRouters from "./src/routes/itemRouters";
-import userRouters from "./src/routes/userRouter";
+import itemRoutes from "./src/routes/itemRoutes";
+import userRoutes from "./src/routes/userRoutes";
 import dotenv from "dotenv";
 import { syncDatabase } from "./src/DB/index"; // Import the main function from DB/index
 import morgan from 'morgan';
@@ -13,8 +13,8 @@ const app = express();
 app.use(express.json());
 app.use(morgan('dev'));
 
-app.use("/api/items", itemRouters);
-app.use("/api/user", userRouters);
+app.use("/api/items", itemRoutes);
+app.use("/api/users", userRoutes);
 
 app.get("/", (req, res) => {
   res.send("hi");
