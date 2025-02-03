@@ -5,6 +5,7 @@ import { Bid } from "../models/bid";
 import { View } from "../models/view";
 import { Like } from "../models/like";
 import dotenv from "dotenv";
+import { Follow } from "../models/follow";
 
 dotenv.config();
 
@@ -16,13 +17,13 @@ const sequelize = new Sequelize({
   password: process.env.DB_PASSWORD || "",
   database: "auction",
   logging: console.log,
-  models: [User, Item, Bid, View, Like], // Register models here
+  models: [User, Follow, Item, Bid, View, Like], // Register models here
 });
 
 
 export const syncDatabase = async() => {
   try {
-    await sequelize.sync({ force: true }); // Use `alter: true` to create tables just if they are not already exists
+    await sequelize.sync({ alter: true }); // Use `alter: true` to create tables just if they are not already exists
     console.log("Database synchronized successfully!");
   } catch (error) {
     console.error("Failed to synchronize database:", error);
