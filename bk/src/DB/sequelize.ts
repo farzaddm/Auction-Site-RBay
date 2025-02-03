@@ -4,6 +4,7 @@ import { Item } from "../models/item";
 import { Bid } from "../models/bid";
 import { View } from "../models/view";
 import { Like } from "../models/like";
+import { Chat } from "../models/chat";
 
 
 export const sequelize = new Sequelize({
@@ -14,5 +15,5 @@ export const sequelize = new Sequelize({
   password: process.env.DB_PASSWORD,
   database: "auction",
   logging: console.log,
-  models: [User, Item, Bid, View, Like], // Register models here
+  models: [User, Item, Bid, View, Like, Chat], // Register models here
 });

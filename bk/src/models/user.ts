@@ -2,8 +2,17 @@ import { Table, Column, Model, DataType, HasMany, BelongsToMany } from "sequeliz
 import { Bid } from "./bid";
 import { View } from "./view";
 import { Like } from "./like";
+import { Chat } from "./chat";
 import { Follow } from "./follow";
 
+@Table({
+  indexes: [
+    {
+      unique: true,
+      fields: ['email']
+    }
+  ]
+})
 @Table({
   indexes: [
     {
@@ -45,6 +54,9 @@ export class User extends Model {
 
   @HasMany(() => Like)
   likes!: Like[];
+
+  @HasMany(() => Chat)
+  chats!: Chat[];
 
   @BelongsToMany(() => User, () => Follow, 'followerId', 'followingId')
   followings!: User[];

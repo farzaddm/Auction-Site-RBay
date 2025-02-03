@@ -2,6 +2,7 @@ import { Table, Column, Model, DataType, HasMany } from "sequelize-typescript";
 import { Bid } from "./bid";
 import { View } from "./view";
 import { Like } from "./like";
+import { Chat } from "./chat";
 
 @Table
 export class Item extends Model {
@@ -37,4 +38,7 @@ export class Item extends Model {
 
   @HasMany(() => Like)
   likesRecords!: Like[];
+
+  @HasMany(() => Chat)
+  chats!: Chat[];
 }
