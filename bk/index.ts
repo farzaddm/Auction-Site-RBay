@@ -1,6 +1,7 @@
 import express from "express";
 import itemRoutes from "./src/routes/itemRoutes";
 import userRoutes from "./src/routes/userRoutes";
+import authRoutes from "./src/routes/authRoutes";
 import chatRoutes from "./src/routes/chatRoutes";
 
 import dotenv from "dotenv";
@@ -16,6 +17,8 @@ app.use(express.json());
 app.use(morgan('dev'));
 
 app.use("/api/items", itemRoutes);
+app.use("/api/users", userRoutes);
+app.use('/api/auth', authRoutes)
 app.use("/api/user", userRoutes);
 app.use("/api/chat", chatRoutes);
 
