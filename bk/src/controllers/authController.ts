@@ -46,6 +46,6 @@ export const signUp = async (req: Request, res: Response): Promise<Response> => 
 };
 
 export const signOut = (req: Request, res: Response): Response => {
-  // Invalidate the token (implementation depends on how you handle token storage)
+  res.clearCookie('token'); // Assuming the token is stored in a cookie
   return res.json({ message: 'Signed out successfully' });
 };
