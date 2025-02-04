@@ -5,6 +5,7 @@ import Layout from './pages/Layout';
 import ProductDetail from './pages/ProductDetail';
 import UserProfile from './pages/UserProfile';
 import UserDashboard from './pages/UserDashboard';
+import NewItem from './pages/NewItem';
 
 const router = createBrowserRouter([
   {
@@ -25,6 +26,10 @@ const router = createBrowserRouter([
       {
         path: 'dashboard',
         element: <UserDashboard />,
+      },
+      {
+        path: 'new',
+        element: <NewItem />,
       },
     ],
   },

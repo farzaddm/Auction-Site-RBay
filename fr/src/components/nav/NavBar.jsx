@@ -77,7 +77,6 @@ function NavBar() {
             <Avatar
               name="new user"
               shadow="xs"
-              src="http://bit.ly/broken-link"
             />
           </Tooltip>
         </Box>
