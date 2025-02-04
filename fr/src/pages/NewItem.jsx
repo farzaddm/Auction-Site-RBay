@@ -1,4 +1,5 @@
 import {
+  Alert,
   Box,
   Button,
   createListCollection,
@@ -10,7 +11,6 @@ import {
   SelectTrigger,
   SelectValueText,
   Spinner,
-  Stack,
   Textarea,
 } from '@chakra-ui/react';
 import { useForm, Controller } from 'react-hook-form';
@@ -36,11 +36,13 @@ function NewItem() {
     handleSubmit,
     formState: { errors, isSubmitting },
     register,
+    setError,
   } = useForm({
     resolver: zodResolver(formSchema),
   });
 
   const onSubmit = (data) => {
+    // setError('root', { message: 'request failed' });
     return new Promise((resolve) => {
       setTimeout(() => {
         console.log(data);
@@ -151,6 +153,17 @@ function NewItem() {
                 <Spinner size={'md'} borderWidth="3px" m={2} />
               ) : (
                 <Button type="submit">Submit</Button>
+              )}
+
+              {errors.root && (
+                <Alert.Root status="error">
+                  <Alert.Indicator />
+                  <Alert.Content>
+                    <Alert.Description textAlign={'start'}>
+                      {errors.root?.message}
+                    </Alert.Description>
+                  </Alert.Content>
+                </Alert.Root>
               )}
             </Flex>
           </form>
