@@ -6,24 +6,48 @@ import {
   Input,
   SelectContent,
   SelectItem,
-  SelectLabel,
   SelectRoot,
   SelectTrigger,
   SelectValueText,
+  Spinner,
   Stack,
   Textarea,
 } from '@chakra-ui/react';
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import { Field } from '../components/ui/field';
+import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
+
+const formSchema = z.object({
+  name: z
+    .string()
+    .min(3, 'Item name must be at least 3 characters long.')
+    .max(50, 'Item name must be at most 50 characters long.'),
+  description: z
+    .string()
+    .min(10, 'Description must be at least 10 characters long.')
+    .max(250, 'Description must be at most 250 characters long.'),
+  duration: z.string({ message: 'Time duration must be selected.' }).array(),
+});
 
 function NewItem() {
   const {
-    register,
+    control,
     handleSubmit,
-    formState: { errors },
-  } = useForm();
+    formState: { errors, isSubmitting },
+    register,
+  } = useForm({
+    resolver: zodResolver(formSchema),
+  });
 
-  const onSubmit = handleSubmit((data) => console.log(data));
+  const onSubmit = (data) => {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        console.log(data);
+        resolve();
+      }, 1000);
+    });
+  };
 
   return (
     <Box width={{ base: '90%', md: '75%', lg: '70%' }} mx={'auto'} pt={20}>
@@ -44,7 +68,7 @@ function NewItem() {
           mx={'auto'}
           backgroundColor={'teal.800/70'}
         >
-          <form onSubmit={onSubmit}>
+          <form onSubmit={handleSubmit(onSubmit)}>
             <Flex gap="4" align={'center'} direction="column" mx={'auto'}>
               <Field
                 mb={!errors.name ? '1.3rem' : 0}
@@ -57,17 +81,7 @@ function NewItem() {
                   maxLength={70}
                   transition={'all .3s ease'}
                   _focus={{ backgroundColor: 'blackAlpha.900' }}
-                  {...register('name', {
-                    required: 'Item name is required',
-                    minLength: {
-                      value: 3,
-                      message: 'Item name must be at laest 3 characters long.',
-                    },
-                    maxLength: {
-                      value: 50,
-                      message: 'Item name must be at most 50 characters long.',
-                    },
-                  })}
+                  {...register('name')}
                 />
               </Field>
 
@@ -84,19 +98,7 @@ function NewItem() {
                   backgroundColor={'blackAlpha.700'}
                   _focus={{ backgroundColor: 'blackAlpha.900' }}
                   transition={'all .3s ease'}
-                  {...register('description', {
-                    required: 'Description is required',
-                    minLength: {
-                      value: 10,
-                      message:
-                        'Description must be at least 10 characters long.',
-                    },
-                    maxLength: {
-                      value: 250,
-                      message:
-                        'Description must be at most 250 characters long.',
-                    },
-                  })}
+                  {...register('description')}
                 />
               </Field>
 
@@ -106,30 +108,50 @@ function NewItem() {
                 invalid={!!errors.duration}
                 errorText={errors.duration?.message}
               >
-                <SelectRoot
-                  rounded={'md'}
-                  backgroundColor={'blackAlpha.700'}
-                  _focus={{ backgroundColor: 'blackAlpha.900' }}
-                  transition={'all .3s ease'}
-                  collection={frameworks}
-                  size="md"
-                  {...register('duration', {
-                    required: 'Time duration must be selected.',
-                  })}
-                >
-                  <SelectTrigger>
-                    <SelectValueText placeholder="Select Duration" />
-                  </SelectTrigger>
-                  <SelectContent position={'absolute'} width={'full'} top={16}>
-                    {frameworks.items.map((d) => (
-                      <SelectItem item={d} key={d.value}>
-                        {d.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </SelectRoot>
+                <Controller
+                  name="duration"
+                  control={control}
+                  render={({ field }) => (
+                    <SelectRoot
+                      name={field.name}
+                      value={field.value}
+                      onValueChange={({ value }) => field.onChange(value)}
+                      onInteractOutside={() => field.onBlur()}
+                      collection={frameworks}
+                      rounded={'md'}
+                      backgroundColor={'blackAlpha.700'}
+                      _focus={{ backgroundColor: 'blackAlpha.900' }}
+                      transition={'all .3s ease'}
+                      size="md"
+                    >
+                      <SelectTrigger>
+                        <SelectValueText placeholder="Select Duration" />
+                      </SelectTrigger>
+                      <SelectContent
+                        position={'absolute'}
+                        width={'full'}
+                        top={16}
+                      >
+                        {frameworks.items.map((d) => (
+                          <SelectItem
+                            key={d.value}
+                            item={d}
+                            onSelect={() => field.onChange(d.value)}
+                          >
+                            {d.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </SelectRoot>
+                  )}
+                />
               </Field>
-              <Button type="submit">Submit</Button>
+
+              {isSubmitting ? (
+                <Spinner size={'md'} borderWidth="3px" m={2} />
+              ) : (
+                <Button type="submit">Submit</Button>
+              )}
             </Flex>
           </form>
         </Box>

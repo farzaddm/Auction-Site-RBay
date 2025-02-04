@@ -7,16 +7,20 @@ import {
   Stack,
   Text,
   VisuallyHidden,
-} from '@chakra-ui/react'
-import { FaInstagram, FaYoutube, FaTelegram, FaGithub, FaLinkedin } from 'react-icons/fa'
-import { ReactNode } from 'react'
-
+} from '@chakra-ui/react';
+import {
+  FaInstagram,
+  FaYoutube,
+  FaTelegram,
+  FaGithub,
+  FaLinkedin,
+} from 'react-icons/fa';
+import { ReactNode } from 'react';
 
 const SocialButton = ({ children, label, href }) => {
-
   return (
     <chakra.button
-      bg={"whiteAlpha.100"}
+      bg={'whiteAlpha.100'}
       rounded={'full'}
       w={8}
       h={8}
@@ -28,35 +32,36 @@ const SocialButton = ({ children, label, href }) => {
       justifyContent={'center'}
       transition={'background 0.3s ease'}
       _hover={{
-        bg: "whiteAlpha.200",
-      }}>
+        bg: 'whiteAlpha.200',
+      }}
+    >
       <VisuallyHidden>{label}</VisuallyHidden>
       {children}
     </chakra.button>
-  )
-}
+  );
+};
 
 export default function Footer() {
-
-  const currentYear = new Date().getFullYear()
+  const currentYear = new Date().getFullYear();
   const iconList = [
-    <FaTelegram />, <FaGithub />, <FaLinkedin />, <FaInstagram />
-  ]
+    <FaTelegram />,
+    <FaGithub />,
+    <FaLinkedin />,
+    <FaInstagram />,
+  ];
 
   return (
-    <Box
-      bg={"gray.900"}
-      marginTop={"2rem"}
-      color={"gray.200"}>
+    <Box bg={'gray.900'} marginTop={'2rem'} color={'gray.200'}>
       <Container
         as={Stack}
-        w={"full"}
+        w={'full'}
         spacing={4}
         justify={'center'}
-        align={'center'}>
+        align={'center'}
+      >
         <Text>RBay</Text>
-        <Flex gap={"1.5rem"} direction={'row'} spacing={6}>
-          <Box as="a" href={'#'} textDecoration={""}>
+        <Flex gap={'1.5rem'} direction={'row'} spacing={6}>
+          <Box as="a" href={'#'} textDecoration={''}>
             Home
           </Box>
           <Box as="a" href={'#'}>
@@ -71,10 +76,7 @@ export default function Footer() {
         </Flex>
       </Container>
 
-      <Box
-        borderTopWidth={1}
-        borderStyle={'solid'}
-        borderColor={"gray.200"}>
+      <Box borderTopWidth={1} borderStyle={'solid'} borderColor={'gray.200'}>
         <Container
           as={Stack}
           maxW={'6xl'}
@@ -82,30 +84,32 @@ export default function Footer() {
           direction={{ base: 'column', md: 'row' }}
           spacing={4}
           justify={{ base: 'center', md: 'space-between' }}
-          align={{ base: 'center', md: 'center' }}>
+          align={{ base: 'center', md: 'center' }}
+        >
           <Text>© {currentYear} RBay Auctions. All rights reserved</Text>
           <Stack direction={'row'} spacing={6}>
-            {
-              iconList.map(icon => <Button
-                bg={"whiteAlpha.100"}
+            {iconList.map((icon) => (
+              <Button
+                bg={'whiteAlpha.100'}
                 rounded={'full'}
                 w={8}
                 h={8}
                 cursor={'pointer'}
-                color={"whiteAlpha.600"}
+                color={'whiteAlpha.600'}
                 display={'inline-flex'}
                 alignItems={'center'}
                 justifyContent={'center'}
                 transition={'background 0.3s ease'}
                 _hover={{
-                  bg: "whiteAlpha.200",
-                }}>
+                  bg: 'whiteAlpha.200',
+                }}
+              >
                 {icon}
-              </Button>)
-            }
+              </Button>
+            ))}
           </Stack>
         </Container>
       </Box>
     </Box>
-  )
+  );
 }

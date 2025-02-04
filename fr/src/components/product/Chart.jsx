@@ -20,13 +20,6 @@ function Chart() {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  const data = [
-    { name: 'Jan', sales: 1000 },
-    { name: 'Ali', sales: 6000 },
-    { name: 'Reza', sales: 2000 },
-    { name: 'Ahmad', sales: 5000 },
-  ];
-
   return (
     <Box
       shadow="md"
@@ -54,5 +47,12 @@ function Chart() {
     </Box>
   );
 }
+
+const data = [
+  { name: 'Jan', sales: 1000 },
+  { name: 'Ali', sales: 6000 },
+  { name: 'Reza', sales: 2000 },
+  { name: 'Ahmad', sales: 5000 },
+];
 
 export default Chart;

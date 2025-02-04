@@ -1,11 +1,19 @@
-import { Box, Flex } from '@chakra-ui/react'
-import { FcDonate, FcInTransit, FcAssistant } from 'react-icons/fc'
-import FeatureItem from './FeatureItem'
+import { Box, Flex } from '@chakra-ui/react';
+import { FcDonate, FcInTransit, FcAssistant } from 'react-icons/fc';
+import FeatureItem from './FeatureItem';
 
 export default function Feature() {
   return (
-    <Box maxW={"70rem"} marginX={"auto"} p={{ md:3, base:10 }}>
-      <Flex spacing={10} width="100%" direction={{ base:"row", mdDown:"column"}} gap={{mdDown:"1rem"}} justifyContent="space-around" alignItems="center" textAlign="center">
+    <Box maxW={'70rem'} marginX={'auto'} p={{ md: 3, base: 10 }}>
+      <Flex
+        spacing={10}
+        width="100%"
+        direction={{ base: 'row', mdDown: 'column' }}
+        gap={{ mdDown: '1rem' }}
+        justifyContent="space-around"
+        alignItems="center"
+        textAlign="center"
+      >
         <FeatureItem
           title={'Lifetime Support'}
           text={
@@ -34,5 +42,5 @@ export default function Feature() {
         </FeatureItem>
       </Flex>
     </Box>
-  )
+  );
 }
