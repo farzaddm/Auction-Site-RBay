@@ -14,12 +14,48 @@ function DrawerFollowing() {
         mx={2}
         separator={<StackSeparator color={'whiteAlpha.900'} />}
       >
-        <DrawerUserFlag id={'test'} name={'ali rdcksbjdcksdcksj5'} image={''} size="small" />
-        <DrawerUserFlag id={'test'} name={'ali reza'} image={''} size="small" />
-        <DrawerUserFlag id={'test'} name={'ali reza'} image={''} size="small" />
-        <DrawerUserFlag id={'test'} name={'ali reza'} image={''} size="small" />
-        <DrawerUserFlag id={'test'} name={'ali reza'} image={''} size="small" />
-        <DrawerUserFlag id={'test'} name={'ali reza'} image={''} size="small" />
+        <DrawerUserFlag
+          id={'test'}
+          name={'ali rdcksbjdcksdcksj5'}
+          image={''}
+          size="small"
+          loading={false}
+        />
+        <DrawerUserFlag
+          id={'test'}
+          name={'ali reza'}
+          image={''}
+          size="small"
+          loading={false}
+        />
+        <DrawerUserFlag
+          loading={false}
+          id={'test'}
+          name={'ali reza'}
+          image={''}
+          size="small"
+        />
+        <DrawerUserFlag
+          loading={false}
+          id={'test'}
+          name={'ali reza'}
+          image={''}
+          size="small"
+        />
+        <DrawerUserFlag
+          loading={false}
+          id={'test'}
+          name={'ali reza'}
+          image={''}
+          size="small"
+        />
+        <DrawerUserFlag
+          loading={false}
+          id={'test'}
+          name={'ali reza'}
+          image={''}
+          size="small"
+        />
       </Stack>
     </>
   );

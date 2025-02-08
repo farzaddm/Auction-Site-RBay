@@ -6,6 +6,7 @@ import ProductDetail from './pages/ProductDetail';
 import UserProfile from './pages/UserProfile';
 import UserDashboard from './pages/UserDashboard';
 import NewItem from './pages/NewItem';
+import DiscoverPage from './pages/DiscoverPage';
 
 const router = createBrowserRouter([
   {
@@ -30,6 +31,10 @@ const router = createBrowserRouter([
       {
         path: 'new',
         element: <NewItem />,
+      },
+      {
+        path: 'discover',
+        element: <DiscoverPage />,
       },
     ],
   },

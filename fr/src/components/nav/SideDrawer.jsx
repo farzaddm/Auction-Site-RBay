@@ -41,7 +41,7 @@ function SideDrawer({ open, setOpen }) {
                   size={'xl'}
                   color={'whiteAlpha.900'}
                 >
-                  "Ali Rezaei"
+                  Ali Rezaei
                 </Heading>
                 <Heading
                   size={'md'}
