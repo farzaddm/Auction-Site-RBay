@@ -8,8 +8,10 @@ import {
   Text,
 } from '@chakra-ui/react';
 import { GiArrowDunk } from 'react-icons/gi';
+import { useNavigate } from "react-router-dom"
 
 function Hero() {
+  const navigate = useNavigate()
   return (
     <Container maxW={'70%'}>
       <Stack as={Box} textAlign={'center'} spacing={{ base: 8, md: 14 }}>
@@ -49,6 +51,7 @@ function Hero() {
             gap=".5rem"
           >
             <Button
+              onClick={() => navigate("/discover")}
               colorScheme={'green'}
               bg={'green.400'}
               rounded={'full'}

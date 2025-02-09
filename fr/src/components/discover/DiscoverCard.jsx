@@ -24,6 +24,7 @@ function DiscoverCard({
   expire,
   isFollowed,
   loading,
+  price,
 }) {
   const navigate = useNavigate();
 
@@ -65,6 +66,9 @@ function DiscoverCard({
         </Heading>
       </Skeleton>
 
+      <Skeleton h={"4"} mt={2} loading={loading}>
+        <Text textAlign={"start"} color={"whiteAlpha.800"}>${price.toFixed(2)}</Text>
+      </Skeleton>
       <Skeleton loading={loading} h={'3'} mt={1}>
         <Text pb={3} textAlign={'start'} color={'whiteAlpha.600'}>
           {expire}

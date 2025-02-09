@@ -2,6 +2,7 @@ import { Outlet } from 'react-router-dom';
 import NavBar from '../components/nav/NavBar';
 import Footer from '../components/home/Footer';
 import { Image } from '@chakra-ui/react';
+import TopIcon from '../components/nav/TopIcon';
 
 function Layout() {
   return (
@@ -16,6 +17,7 @@ function Layout() {
       <NavBar />
       <Outlet />
       <Footer />
+      <TopIcon />
     </>
   );
 }

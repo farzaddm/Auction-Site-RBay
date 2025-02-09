@@ -15,6 +15,7 @@ function DiscoverGrid() {
       gap={5}
     >
       <DiscoverCard
+        price={20}
         badgeList={['Hot', 'Decoration']}
         loading={false}
         expire={'2 days'}
@@ -27,6 +28,7 @@ function DiscoverGrid() {
         userName={'ali reza'}
       />
       <DiscoverCard
+        price={20}
         badgeList={['Hot', 'Decoration']}
         loading={false}
         expire={'2 days'}
@@ -39,6 +41,7 @@ function DiscoverGrid() {
         userName={'ali reza'}
       />
       <DiscoverCard
+        price={20}
         badgeList={['Hot', 'Decoration']}
         loading={false}
         expire={'2 days'}
@@ -51,6 +54,7 @@ function DiscoverGrid() {
         userName={'ali reza'}
       />
       <DiscoverCard
+        price={20}
         badgeList={['Hot', 'Decoration']}
         loading={false}
         expire={'2 days'}
@@ -63,6 +67,7 @@ function DiscoverGrid() {
         userName={'ali reza'}
       />
       <DiscoverCard
+        price={20}
         badgeList={['Hot', 'Decoration']}
         loading={false}
         expire={'2 days'}
@@ -75,6 +80,7 @@ function DiscoverGrid() {
         userName={'ali reza'}
       />
       <DiscoverCard
+        price={20}
         badgeList={['Hot', 'Decoration']}
         loading={false}
         expire={'2 days'}
@@ -87,6 +93,7 @@ function DiscoverGrid() {
         userName={'ali reza'}
       />
       <DiscoverCard
+        price={20}
         badgeList={['Hot', 'Decoration']}
         loading={false}
         expire={'2 days'}
@@ -99,6 +106,7 @@ function DiscoverGrid() {
         userName={'ali reza'}
       />
       <DiscoverCard
+        price={20}
         badgeList={['Hot', 'Decoration']}
         loading={false}
         expire={'2 days'}
@@ -111,6 +119,7 @@ function DiscoverGrid() {
         userName={'ali reza'}
       />
       <DiscoverCard
+        price={20}
         badgeList={['Hot', 'Decoration']}
         loading={false}
         expire={'2 days'}
@@ -123,6 +132,7 @@ function DiscoverGrid() {
         userName={'ali reza'}
       />
       <DiscoverCard
+        price={20}
         badgeList={['Hot', 'Decoration']}
         loading={false}
         expire={'2 days'}
@@ -135,6 +145,7 @@ function DiscoverGrid() {
         userName={'ali reza'}
       />
       <DiscoverCard
+        price={20}
         badgeList={['Hot', 'Decoration']}
         loading={false}
         expire={'2 days'}

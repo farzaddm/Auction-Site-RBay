@@ -5,7 +5,7 @@ import CarouselItem from './CarouselItem';
 
 export default function Carousel() {
   const scrollContainerRef = useRef(null);
-  
+
   const scroll = (direction) => {
     if (scrollContainerRef.current) {
       const scrollAmount = 300;
@@ -15,7 +15,7 @@ export default function Carousel() {
       });
     }
   };
-  
+
   return (
     <>
       <Text
@@ -96,10 +96,13 @@ export default function Carousel() {
         >
           {products.map((product, index) => (
             <CarouselItem
+              price={30}
+              link={'/product'}
               key={index}
               expireDate={product.expireDate}
               image={product.image}
-              price={product.price}
+              isLiked={true}
+              likeCount={1000}
               title={product.title}
             />
           ))}
@@ -108,7 +111,6 @@ export default function Carousel() {
     </>
   );
 }
-
 
 const products = [
   {

@@ -4,7 +4,7 @@ import DiscoverFilter from '../components/discover/DiscoverFilter';
 
 function DiscoverPage() {
   return (
-    <Box pt={'28'} width={{ base: '100%', md: '95%' }} mx={"auto"}>
+    <Box pt={'28'} width={{ base: '95%', md: '95%' }} mx={"auto"}>
       <Box
         rounded={'lg'}
         shadow={'md'}
@@ -16,8 +16,8 @@ function DiscoverPage() {
           justifyContent="space-between"
           gap={4}
         >
-          <DiscoverGrid />
           <DiscoverFilter />
+          <DiscoverGrid />
         </Flex>
       </Box>
     </Box>

@@ -59,7 +59,7 @@ function ProductDetail() {
           </Skeleton>
         </Box>
         <Box
-          backgroundColor={'blackAlpha.700'}
+          backgroundColor={'teal.900/70'}
           shadow="md"
           borderRadius={10}
           padding={{ xl: 10, xlDown: 10, sm: 5, smDown: 5 }}
@@ -220,6 +220,9 @@ function ProductDetail() {
           </HStack>
 
           <Flex
+            backgroundColor={"blackAlpha.700/80"}
+            rounded={"md"}
+            p={4}
             marginTop={6}
             direction={{
               base: 'row',
@@ -229,7 +232,7 @@ function ProductDetail() {
               mdDown: 'column',
             }}
             gap={2}
-            width={'50%'}
+            width={{base: "90%", lg:"50%"}}
             justifyContent={'left'}
             alignItems={'left'}
           >
@@ -246,6 +249,7 @@ function ProductDetail() {
               >
                 <Input
                   className="peer"
+                  variant={"subtle"}
                   borderColor={'whiteAlpha.700'}
                   placeholder=""
                   type="number"
