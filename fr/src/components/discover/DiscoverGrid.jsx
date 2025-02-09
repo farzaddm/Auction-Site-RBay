@@ -5,7 +5,13 @@ function DiscoverGrid() {
   return (
     <Grid
       p={3}
-      templateColumns={{ base: '1fr', sm: '1fr 1fr', xl: '1fr 1fr 1fr' }}
+      templateColumns={{
+        base: '1fr',
+        sm: '1fr 1fr',
+        md: '1fr 1fr',
+        lg: '1fr 1fr 1fr',
+        xl: '1fr 1fr 1fr 1fr',
+      }}
       gap={5}
     >
       <DiscoverCard
@@ -138,7 +144,7 @@ function DiscoverGrid() {
         isLiked={true}
         title={'Lorem ipsum dolor'}
         userImage={'https://thispersondoesnotexist.com/'}
-        userName={'ali reza'}
+        userName={'ali rezasdckadsckasjdn'}
       />
     </Grid>
   );

@@ -1,4 +1,3 @@
-import { createListCollection } from '@chakra-ui/react';
 import { Field } from '../ui/field';
 import { Controller } from 'react-hook-form';
 import {
@@ -17,7 +16,7 @@ function DiscoverFilterSelect({
   label,
 }) {
   return (
-    <Field label={label} errorText={errorMessage} >
+    <Field label={label} errorText={errorMessage}>
       <Controller
         control={control}
         name={name}
@@ -31,7 +30,7 @@ function DiscoverFilterSelect({
             rounded="md"
             collection={collection}
           >
-            <SelectTrigger>
+            <SelectTrigger width="100%">
               <SelectValueText placeholder={label} />
             </SelectTrigger>
             <SelectContent>

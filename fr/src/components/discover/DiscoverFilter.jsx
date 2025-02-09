@@ -62,7 +62,7 @@ function DiscoverFilter() {
 
   return (
     <Box
-      width={'30%'}
+      width={{ base: '100%', md: '40%', lg: '30%' }}
       backgroundColor={'blackAlpha.700/70'}
       m={2}
       rounded={'md'}

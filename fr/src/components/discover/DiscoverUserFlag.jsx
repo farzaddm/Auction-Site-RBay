@@ -11,8 +11,16 @@ function DiscoverUserFlag({ image, name, id, isFollowed, loading }) {
 
       <Flex direction="column" justifyContent="center">
         <Skeleton loading={loading} h={'4'}>
-          <Heading size="lg" textAlign={'start'} color="whiteAlpha.900">
-            {name}
+          <Heading
+            h={'6'}
+            size="md"
+            textAlign={'start'}
+            color="whiteAlpha.900"
+            w={"20"}
+            isTruncated
+            noOfLines={1}
+          >
+            {name.length > 10 ? name.substring(0, 8) + '...' : name}
           </Heading>
         </Skeleton>
 
@@ -25,7 +33,7 @@ function DiscoverUserFlag({ image, name, id, isFollowed, loading }) {
 
       <Skeleton loading={loading}>
         <Button
-          size={'sm'}
+          size={'xs'}
           variant={'subtle'}
           colorPalette={isFollowed ? 'red' : 'blue'}
         >

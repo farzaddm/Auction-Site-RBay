@@ -1,12 +1,10 @@
 import {
-  Box,
   Button,
   Flex,
   Heading,
   Text,
   Icon,
   Image,
-  Link,
   HStack,
   Badge,
 } from '@chakra-ui/react';
@@ -48,7 +46,13 @@ function DiscoverCard({
       />
 
       <Skeleton h={'32'} my={2} loading={loading}>
-        <Image rounded={'md'} my={4} src={image} width={'100%'} height={28} />
+        <Image
+          rounded={'md'}
+          my={4}
+          src={image}
+          width={'100%'}
+          height={{ base: 24, md: 28 }}
+        />
       </Skeleton>
 
       <Skeleton h={'6'} loading={loading}>
@@ -77,7 +81,11 @@ function DiscoverCard({
         </HStack>
       </Skeleton>
 
-      <Flex justifyContent={'space-between'} alignItems={'center'}>
+      <Flex
+        justifyContent={'space-between'}
+        alignItems={'center'}
+        flexWrap="wrap"
+      >
         <Skeleton h={'4'} loading={loading}>
           <Flex alignItems="center" gap={1}>
             <Icon
