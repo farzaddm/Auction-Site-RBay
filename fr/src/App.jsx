@@ -7,6 +7,8 @@ import UserProfile from './pages/UserProfile';
 import UserDashboard from './pages/UserDashboard';
 import NewItem from './pages/NewItem';
 import DiscoverPage from './pages/DiscoverPage';
+import LoginPage from './pages/LoginPage';
+import SignupPage from './pages/SignupPage';
 
 const router = createBrowserRouter([
   {
@@ -38,6 +40,14 @@ const router = createBrowserRouter([
       },
     ],
   },
+  {
+    path: "/login",
+    element: <LoginPage />
+  },
+  {
+    path: "/signup",
+    element: <SignupPage />
+  }
 ]);
 
 function App() {
