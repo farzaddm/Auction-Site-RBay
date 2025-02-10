@@ -13,14 +13,6 @@ import { Follow } from "./follow";
     }
   ]
 })
-@Table({
-  indexes: [
-    {
-      unique: true,
-      fields: ['email']
-    }
-  ]
-})
 export class User extends Model {
   @Column({ type: DataType.STRING, allowNull: false })
   name!: string;

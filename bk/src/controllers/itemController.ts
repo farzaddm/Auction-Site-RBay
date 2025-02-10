@@ -5,6 +5,10 @@ import { User } from "../models/user";
 import { Like } from "../models/like";
 import { View } from "../models/view";
 import { Bid } from "../models/bid";
+import redisClient from "../DB/redisClient";
+import { itemKey } from '../utils/keys';
+
+const EXPIRATION_TIME = 86400; // 1 day in seconds
 
 export const createItem = async (req: Request, res: Response): Promise<Response> => {  
   try {
@@ -24,6 +28,22 @@ export const createItem = async (req: Request, res: Response): Promise<Response>
       duration,
     });
 
+    const itemData = {
+      id: newItem.id.toString(),
+      name: newItem.name,
+      description: newItem.description,
+      price: newItem.price.toString(),
+      pic: newItem.pic,
+      views: newItem.views.toString(),
+      likes: newItem.likes.toString(),
+      duration: newItem.duration.toString(),
+    };
+
+    // Cache the new item
+    const cacheKey = itemKey(newItem.id.toString());
+    await redisClient.hSet(cacheKey, itemData);
+    await redisClient.expire(cacheKey, EXPIRATION_TIME); // Cache for 1 day
+
     return res.status(201).json({
       message: "Item created successfully",
       data: newItem,
@@ -39,18 +59,38 @@ export const createItem = async (req: Request, res: Response): Promise<Response>
 export const getItemById = async (req: Request, res: Response): Promise<Response> => {
   try {
     const { id } = req.params;
+    const cacheKey = itemKey(id);
+    const cachedItem = await redisClient.hGetAll(cacheKey);
+
+    if (Object.keys(cachedItem).length > 0) {
+      return res.json(cachedItem);
+    }
+
     const item = await Item.findByPk(id);
 
     if (!item) {
       return res.status(404).json({ message: "Item not found" });
     }
 
+    const itemData = {
+      id: item.id.toString(),
+      name: item.name,
+      description: item.description,
+      price: item.price.toString(),
+      pic: item.pic,
+      views: item.views.toString(),
+      likes: item.likes.toString(),
+      duration: item.duration.toString(),
+    };
+
+    await redisClient.hSet(cacheKey, itemData);
+    await redisClient.expire(cacheKey, EXPIRATION_TIME); // Cache for 1 day
     return res.status(200).json({
       message: "Item retrieved successfully",
       data: item,
     });
   } catch (error) {
-    console.error(error);
+    console.error("Error retrieving item:", error);
     return res.status(500).json({ message: "Server error, could not retrieve item" });
   }
 };
@@ -58,9 +98,6 @@ export const getItemById = async (req: Request, res: Response): Promise<Response
 
 export const likeItem = async (req: Request, res: Response): Promise<Response> => {
   const { userId, itemId } = req.body;
-  console.log(userId, itemId);
-  
-  
   
   try {
     const item = await Item.findByPk(itemId);
@@ -77,11 +114,18 @@ export const likeItem = async (req: Request, res: Response): Promise<Response> =
       where: { userId, itemId },
     });
 
+    const cacheKey = itemKey(itemId);
+    const cachedItem = await redisClient.hGetAll(cacheKey);
+
     if (like) {
       await like.destroy();
+      if (Object.keys(cachedItem).length > 0) 
+        await redisClient.hIncrBy(cacheKey, 'likes', -1);  
       return res.status(200).json({ message: 'Item unliked successfully' });
     } else {
       await Like.create({ userId, itemId });
+      if (Object.keys(cachedItem).length > 0) 
+        await redisClient.hIncrBy(cacheKey, 'likes', 1);  
       return res.status(201).json({ message: 'Item liked successfully' });
     }
   } catch (error: any) {
@@ -112,6 +156,12 @@ export const viewItem = async (req: Request, res: Response): Promise<Response> =
     } else {
       await View.create({ userId, itemId });
       item.increment('views');
+
+      const cacheKey = itemKey(itemId);
+      const cachedItem = await redisClient.hGetAll(cacheKey);
+      if (Object.keys(cachedItem).length > 0) 
+        await redisClient.hIncrBy(cacheKey, 'likes', 1);  
+
       return res.status(200).json({ message: 'Item viewed successfully' });
     }
   } catch (error: any) {

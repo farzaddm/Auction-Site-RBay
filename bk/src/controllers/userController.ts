@@ -1,58 +1,58 @@
 import { Request, Response } from "express";
 import { User } from "../models/user";
-// import validator from "validator";
+import redisClient from "../DB/redisClient";
+import { userKey } from "../utils/keys";
 
-// export const createUser = async (
-//   req: Request,
-//   res: Response
-// ): Promise<Response> => {
-//   try {
-//     const { name, password, email, ...optionalFields } = req.body;
+const EXPIRATION_TIME = 86400; // 1 day in seconds
 
-//     if (!name || !password || !email) {
-//       return res
-//         .status(400)
-//         .json({ message: "Name, password, and email are required." });
-//     }
+export const getUserById = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
+  const { id } = req.params;
+  try {
+    const cacheKey = userKey(id);
+    const cachedUser = await redisClient.hGetAll(cacheKey);
 
-//     if (!validator.isEmail(email)) {
-//       return res.status(400).json({ message: "Invalid email format." });
-//     }
+    if (Object.keys(cachedUser).length > 0) {
+      return res.json(cachedUser);
+    }
 
-//     if (!validator.isStrongPassword(password, {minLength: 8,minLowercase: 1,minUppercase: 1,minNumbers: 1,minSymbols:0})) {
-//       return res.status(400).json({
-//         message:
-//           "Password must be at least 8 characters long and include at least one lowercase letter, one uppercase letter, one number.",
-//       });
-//     }
+    const user = await User.findByPk(id);
+    if (!user) {
+      return res.status(404).json({ message: "User not found." });
+    }
 
-//     const newUser = await User.create({
-//       name,
-//       password,
-//       email,
-//       ...optionalFields,
-//     });
+    const userData = {
+      id: user.id.toString(),
+      name: user.name,
+      email: user.email,
+      password: user.password,
+      pic: user.pic,
+      date_of_birth: user.date_of_birth?.toISOString() || "",
+      job: user.job,
+      education: user.education,
+      location: user.location,
+    };
 
-//     return res.status(201).json({
-//       message: "User created successfully",
-//       data: newUser,
-//     });
-//   } catch (error) {
-//     console.error("Error creating user:", error);
-//     return res
-//       .status(500)
-//       .json({ message: "Server error, could not create user." });
-//   }
-// };
+    await redisClient.hSet(cacheKey, userData);
+    await redisClient.expire(cacheKey, EXPIRATION_TIME); // Cache for 1 day
+    return res.json(userData);
+  } catch (error) {
+    console.error("Error retrieving user:", error);
+    return res
+      .status(500)
+      .json({ message: "Server error, could not retrieve user" });
+  }
+};
 
 export const updateUser = async (
   req: Request,
   res: Response
 ): Promise<Response> => {
+  const { id } = req.params;
+  const { name, password, email, ...optionalFields } = req.body;
   try {
-    const { id } = req.params;
-    const { name, password, email, ...optionalFields } = req.body;
-
     const user = await User.findByPk(id);
     if (!user) {
       return res.status(404).json({ message: "User not found." });
@@ -65,6 +65,23 @@ export const updateUser = async (
 
     await user.save();
 
+    const userData = {
+      id: user.id.toString(),
+      name: user.name,
+      email: user.email,
+      password: user.password,
+      pic: user.pic,
+      date_of_birth: user.date_of_birth?.toISOString() || "",
+      job: user.job,
+      education: user.education,
+      location: user.location,
+    };
+
+    // Update the cache
+    const cacheKey = userKey(id);
+    await redisClient.hSet(cacheKey, userData);
+    await redisClient.expire(cacheKey, EXPIRATION_TIME); // Cache for 1 day
+
     return res.status(200).json({
       message: "User updated successfully",
       data: user,
@@ -73,30 +90,6 @@ export const updateUser = async (
     console.error("Error updating user:", error);
     return res
       .status(500)
-      .json({ message: "Server error, could not update user." });
-  }
-};
-
-export const getUserById = async (
-  req: Request,
-  res: Response
-): Promise<Response> => {
-  try {
-    const { id } = req.params;
-
-    const user = await User.findByPk(id);
-    if (!user) {
-      return res.status(404).json({ message: "User not found." });
-    }
-
-    return res.status(200).json({
-      message: "User retrieved successfully",
-      data: user,
-    });
-  } catch (error) {
-    console.error("Error retrieving user:", error);
-    return res
-      .status(500)
-      .json({ message: "Server error, could not retrieve user." });
+      .json({ message: "Server error, could not update user" });
   }
 };

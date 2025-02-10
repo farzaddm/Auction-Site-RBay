@@ -18,9 +18,11 @@
     "bcrypt": "^5.1.1",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
+    "ioredis": "^5.4.2",
     "jsonwebtoken": "^9.0.2",
     "morgan": "^1.10.0",
     "mysql2": "^3.11.5",
+    "redis": "^4.7.0",
     "sequelize": "^6.37.5",
     "sequelize-typescript": "^2.1.6",
     "validator": "^13.12.0"
