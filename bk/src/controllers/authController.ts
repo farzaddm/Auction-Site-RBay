@@ -11,15 +11,15 @@ export const login = async (req: Request, res: Response): Promise<Response> => {
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
     }
-    console.log(password, user.password);
     
     const isPasswordValid = await bcrypt.compare(password, user.password);
-    console.log(isPasswordValid);
     
     if (!isPasswordValid) {
       return res.status(401).json({ error: 'Invalid password' });
     }
     const token = jwt.sign({ userId: user.id }, 'your_jwt_secret', { expiresIn: '1h' });
+    console.log(token);
+    
     return res.json({ token });
   } catch (error) {
     return res.status(500).json({ error: 'Internal server error' });
