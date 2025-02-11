@@ -1,0 +1,45 @@
+{
+  "name": "rbay",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon --watch bk --ext ts --exec ts-node bk/index.ts",
+    "start db": "bk/src/DB/index.ts",
+    "pretest": "node -e \"require('fs').mkdirSync('bk/coverage', { recursive: true })\"",
+    "test": "jest --coverage --config bk/jest.config.js",
+    "test:coverage": "jest --coverage"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@types/bcrypt": "^5.0.2",
+    "@types/jsonwebtoken": "^9.0.8",
+    "bcrypt": "^5.1.1",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "ioredis": "^5.4.2",
+    "jsonwebtoken": "^9.0.2",
+    "morgan": "^1.10.0",
+    "mysql2": "^3.11.5",
+    "redis": "^4.7.0",
+    "sequelize": "^6.37.5",
+    "sequelize-typescript": "^2.1.6",
+    "validator": "^13.12.0"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.0",
+    "@types/jest": "^29.5.14",
+    "@types/morgan": "^1.9.9",
+    "@types/node": "^22.10.2",
+    "@types/validator": "^13.12.2",
+    "jest": "^29.7.0",
+    "nodemon": "^3.1.9",
+    "ts-jest": "^29.2.5",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.7.2"
+  },
+  "jest": {
+    "coverageDirectory": "./bk/coverage"
+  }
+}
