@@ -18,6 +18,7 @@ const sequelize = new Sequelize({
   password: process.env.DB_PASSWORD || "",
   database: "auction",
   // logging: console.log,
+  logging: false,
   models: [User, Follow, Item, Bid, View, Like, Chat], // Register models here
 });
 

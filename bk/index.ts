@@ -1,4 +1,5 @@
 import express from "express";
+import cors from "cors";
 import itemRoutes from "./src/routes/itemRoutes";
 import userRoutes from "./src/routes/userRoutes";
 import authRoutes from "./src/routes/authRoutes";
@@ -6,7 +7,7 @@ import chatRoutes from "./src/routes/chatRoutes";
 
 import dotenv from "dotenv";
 import { syncDatabase } from "./src/DB/index"; // Import the main function from DB/index
-import morgan from 'morgan';
+import morgan from "morgan";
 
 // Load environment variables
 dotenv.config();
@@ -14,11 +15,12 @@ dotenv.config();
 const app = express();
 
 app.use(express.json());
-app.use(morgan('dev'));
+app.use(morgan("dev"));
+app.use(cors({ origin: "http://localhost:5173" }));
 
 app.use("/api/items", itemRoutes);
 app.use("/api/users", userRoutes);
-app.use('/api/auth', authRoutes)
+app.use("/api/auth", authRoutes);
 app.use("/api/user", userRoutes);
 app.use("/api/chat", chatRoutes);
 

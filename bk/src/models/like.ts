@@ -2,7 +2,7 @@ import { Table, Column, Model, ForeignKey, DataType, Unique  } from "sequelize-t
 import { User } from "./user";
 import { Item } from "./item";
 
-@Table
+@Table({ timestamps: true })
 export class Like extends Model {
   @ForeignKey(() => User) // Each like must be associated with a user
   @Unique("unique_like") // Composite unique key

@@ -1,10 +1,11 @@
-import { Table, Column, Model, DataType, HasMany } from "sequelize-typescript";
+import { Table, Column, Model, DataType, HasMany, ForeignKey, BelongsTo } from "sequelize-typescript";
 import { Bid } from "./bid";
 import { View } from "./view";
 import { Like } from "./like";
 import { Chat } from "./chat";
+import { User } from "./user";
 
-@Table
+@Table({ timestamps: true })
 export class Item extends Model {
   // sequelize make id itself
   // Sequelize also automatically manages the createdAt and updatedAt fields
@@ -29,6 +30,23 @@ export class Item extends Model {
 
   @Column({ type: DataType.INTEGER, allowNull: false })
   duration!: number;
+
+  @Column({
+    type: DataType.ENUM,
+    values: ["decorative", "furniture", "electronics", "clothing", "books", "toys", "sports"],
+    allowNull: false,
+  })
+  category!: string;
+
+  @Column({ type: DataType.BOOLEAN, defaultValue: false })
+  hotness!: boolean;
+
+  @ForeignKey(() => User) // Linking the user who created the item
+  @Column({ type: DataType.INTEGER, allowNull: false })
+  userId!: number;
+
+  @BelongsTo(() => User) 
+  user!: User;
 
   @HasMany(() => Bid)
   bids!: Bid[];

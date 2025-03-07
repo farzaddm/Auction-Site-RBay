@@ -2,7 +2,7 @@ import { Table, Column, Model, ForeignKey, DataType, Unique } from "sequelize-ty
 import { User } from "./user";
 import { Item } from "./item";
 
-@Table
+@Table({ timestamps: true })
 export class View extends Model {
   @ForeignKey(() => User)
   @Unique("unique_view")
