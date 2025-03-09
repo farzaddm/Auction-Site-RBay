@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   Flex,
   Heading,
@@ -10,6 +10,7 @@ import {
   Icon,
   Text,
   Alert,
+  Spinner,
 } from '@chakra-ui/react';
 import {
   FaRegEyeSlash,
@@ -18,12 +19,14 @@ import {
   FaLock,
   FaEnvelope,
 } from 'react-icons/fa';
+import { toaster, Toaster } from '../components/ui/toaster';
 import { InputGroup } from '../components/ui/input-group';
 import { Field } from '../components/ui/field';
 import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useSignup } from '../http/useHttp';
 
 const signupSchema = z
   .object({
@@ -44,11 +47,11 @@ const signupSchema = z
 function SignupPage() {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
+  const { mutate, error, isError, isPending } = useSignup();
 
   const {
     register,
     handleSubmit,
-    setError,
     formState: { isSubmitting, errors },
   } = useForm({
     resolver: zodResolver(signupSchema),
@@ -57,9 +60,17 @@ function SignupPage() {
   const handleShowClick = () => setShowPassword((prev) => !prev);
 
   const onSubmit = (data) => {
-    // return console.log(data)
-    return setError('root', { message: 'test error' });
+    console.log(data);
+    mutate(data);
   };
+
+  useEffect(() => {
+    if (isError) {
+      toaster.error({
+        description: error.message,
+      });
+    }
+  }, [isError]);
 
   return (
     <Flex
@@ -178,17 +189,23 @@ function SignupPage() {
                 />
               </InputGroup>
             </Field>
-            <Button
-              rounded={'md'}
-              type="submit"
-              variant="solid"
-              width="full"
-              isLoading={isSubmitting}
-            >
-              Sign Up
-            </Button>
+            {isPending ? (
+              <Box w={'full'} textAlign={'center'}>
+                <Spinner size={'lg'} />
+              </Box>
+            ) : (
+              <Button
+                rounded={'md'}
+                type="submit"
+                variant="solid"
+                width="full"
+                isLoading={isSubmitting}
+              >
+                Sign Up
+              </Button>
+            )}
             {errors.root && (
-              <Alert.Root status="error" textAlign={"start"}>
+              <Alert.Root status="error" textAlign={'start'}>
                 <Alert.Indicator />
                 <Alert.Content>
                   <Alert.Description>{errors.root?.message}</Alert.Description>
@@ -212,6 +229,7 @@ function SignupPage() {
           Login
         </Text>
       </Box>
+      <Toaster />
     </Flex>
   );
 }

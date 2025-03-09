@@ -3,6 +3,7 @@ import NavBar from '../components/nav/NavBar';
 import Footer from '../components/home/Footer';
 import { Image } from '@chakra-ui/react';
 import TopIcon from '../components/nav/TopIcon';
+import { Toaster } from '../components/ui/toaster';
 
 function Layout() {
   return (
@@ -18,6 +19,7 @@ function Layout() {
       <Outlet />
       <Footer />
       <TopIcon />
+      <Toaster />
     </>
   );
 }

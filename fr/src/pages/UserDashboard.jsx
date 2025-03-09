@@ -1,4 +1,4 @@
-import { Box, Button, Heading, Icon, Kbd, Table, Text } from '@chakra-ui/react';
+import { Box, Button, Heading, Icon, Table, Text } from '@chakra-ui/react';
 import {
   ActionBarCloseTrigger,
   ActionBarContent,

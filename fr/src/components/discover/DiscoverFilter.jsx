@@ -7,7 +7,6 @@ import { Slider } from '../ui/slider';
 const sort = createListCollection({
   items: [
     { label: 'Most Liked', value: 'liked' },
-    { label: 'Hot Items', value: 'hot' },
     { label: 'Following', value: 'following' },
     { label: 'Favorite', value: 'favorite' },
     { label: 'Newest', value: 'newest' },
@@ -29,6 +28,7 @@ const ending = createListCollection({
 
 const category = createListCollection({
   items: [
+    { label: 'Hot Items', value: 'hot' },
     { label: 'Decorative', value: 'decorative' },
     { label: 'Furniture', value: 'furniture' },
     { label: 'Electronics', value: 'electronics' },
@@ -40,15 +40,14 @@ const category = createListCollection({
   ],
 });
 
-const condition = createListCollection({
+const isHot = createListCollection({
   items: [
-    { label: 'New', value: 'new' },
-    { label: 'Used', value: 'used' },
-    { label: 'Refurbished', value: 'refurbished' },
+    { label: 'yes', value: 'true' },
+    { label: 'no', value: 'false' },
   ],
 });
 
-function DiscoverFilter() {
+function DiscoverFilter({ setQuery }) {
   const {
     handleSubmit,
     formState: { errors },
@@ -58,7 +57,13 @@ function DiscoverFilter() {
     defaultValues: { slider: [0, 30] },
   });
 
-  const onSubmit = handleSubmit((data) => console.log(data));
+  const onSubmit = handleSubmit((data) => {
+    console.log(data);
+    let query = `sort=${data.sort || null}&ending=${
+      data.ending || null
+    }&category=${data.category || null}&hotness=${data.hotness || null}&price=${data.slider[0]},${data.slider[1]}`;
+    setQuery(query);
+  });
 
   return (
     <Box
@@ -126,11 +131,11 @@ function DiscoverFilter() {
           />
 
           <DiscoverFilterSelect
-            label={'Condition'}
-            collection={condition}
+            label={'Is hot'}
+            collection={isHot}
             control={control}
-            errorMessage={errors.condition?.message}
-            name={'condition'}
+            errorMessage={errors.isHot?.message}
+            name={'isHot'}
           />
 
           <Button size="sm" type="submit">

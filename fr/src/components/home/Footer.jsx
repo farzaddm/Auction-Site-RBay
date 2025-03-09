@@ -88,8 +88,9 @@ export default function Footer() {
         >
           <Text>© {currentYear} RBay Auctions. All rights reserved</Text>
           <Stack direction={'row'} spacing={6}>
-            {iconList.map((icon) => (
+            {iconList.map((icon, index) => (
               <Button
+                key={index}
                 bg={'whiteAlpha.100'}
                 rounded={'full'}
                 w={8}

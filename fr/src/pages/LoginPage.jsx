@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   Flex,
   Heading,
@@ -10,6 +10,7 @@ import {
   Icon,
   Text,
   Alert,
+  Spinner,
 } from '@chakra-ui/react';
 import { FaRegEyeSlash, FaRegEye, FaUserAlt, FaLock } from 'react-icons/fa';
 import { InputGroup } from '../components/ui/input-group';
@@ -18,9 +19,13 @@ import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useLogin } from '../http/useHttp';
+import { toaster, Toaster } from '../components/ui/toaster';
 
 const loginSchema = z.object({
-  email: z.string().email({ message: 'email is not valid.' }),
+  username: z
+    .string()
+    .min(4, { message: 'user name must be at least 6 characters long.' }),
   password: z
     .string()
     .min(6, { message: 'password must be at least 6 characters long.' }),
@@ -29,11 +34,13 @@ const loginSchema = z.object({
 function LoginPage() {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
+  const { data, mutate, isPending, isError, error } = useLogin();
 
   const {
     register,
     handleSubmit,
     formState: { isSubmitting, errors },
+    setValue,
   } = useForm({
     resolver: zodResolver(loginSchema),
   });
@@ -42,7 +49,17 @@ function LoginPage() {
 
   const onSubmit = (data) => {
     console.log(data);
+    mutate(data);
+    setValue('password', '');
   };
+
+  useEffect(() => {
+    if (isError) {
+      toaster.error({
+        description: error.message,
+      });
+    }
+  }, [isError]);
 
   return (
     <Flex
@@ -63,11 +80,11 @@ function LoginPage() {
         flexDir="column"
         mb="2"
         justifyContent="center"
-        p={5}
+        p={{ base: 2, md: 5 }}
         rounded={'md'}
         backgroundColor={'gray.400/50'}
         alignItems="center"
-        w={'45%'}
+        w={{ base: '90%', md: '70%', lg: '45%' }}
       >
         <Heading size={'4xl'} color="teal.400">
           Welcome Back!
@@ -76,14 +93,17 @@ function LoginPage() {
           <Stack
             spacing={4}
             p={8}
-            px={16}
+            px={{ base: 10, md: 16 }}
             rounded={'lg'}
             shadow={'md'}
             backgroundColor="teal.800/80"
             gap={4}
             w={'100%'}
           >
-            <Field invalid={errors.email} errorText={errors.email?.message}>
+            <Field
+              invalid={errors.username}
+              errorText={errors.username?.message}
+            >
               <InputGroup
                 w="100%"
                 startElement={<FaUserAlt color="gray.300" />}
@@ -93,8 +113,8 @@ function LoginPage() {
                   w={'100%'}
                   color={'whiteAlpha.800'}
                   backgroundColor={'blackAlpha.800'}
-                  placeholder="Email address"
-                  {...register('email')}
+                  placeholder="User Name"
+                  {...register('username')}
                 />
               </InputGroup>
             </Field>
@@ -139,16 +159,22 @@ function LoginPage() {
             >
               Forgot Password?
             </Text>
+            {isPending ? (
+              <Box w={'full'} textAlign={'center'}>
+                <Spinner size={'lg'} />
+              </Box>
+            ) : (
+              <Button
+                rounded={'md'}
+                type="submit"
+                variant="solid"
+                width="full"
+                isLoading={isSubmitting}
+              >
+                Login
+              </Button>
+            )}
 
-            <Button
-              rounded={'md'}
-              type="submit"
-              variant="solid"
-              width="full"
-              isLoading={isSubmitting}
-            >
-              Login
-            </Button>
             {errors.root && (
               <Alert.Root status="error" textAlign={'start'}>
                 <Alert.Indicator />
@@ -174,6 +200,7 @@ function LoginPage() {
           Sign Up
         </Text>
       </Box>
+      <Toaster />
     </Flex>
   );
 }

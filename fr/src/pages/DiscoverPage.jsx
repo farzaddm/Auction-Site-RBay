@@ -1,8 +1,10 @@
 import { Box, Flex } from '@chakra-ui/react';
 import DiscoverGrid from '../components/discover/DiscoverGrid';
 import DiscoverFilter from '../components/discover/DiscoverFilter';
+import { useState } from 'react';
 
 function DiscoverPage() {
+  const [queryParam, setQueryParam] = useState("")
   return (
     <Box pt={'28'} width={{ base: '95%', md: '95%' }} mx={"auto"}>
       <Box
@@ -16,8 +18,8 @@ function DiscoverPage() {
           justifyContent="space-between"
           gap={4}
         >
-          <DiscoverFilter />
-          <DiscoverGrid />
+          <DiscoverFilter setQuery={setQueryParam} />
+          <DiscoverGrid query={queryParam} />
         </Flex>
       </Box>
     </Box>
