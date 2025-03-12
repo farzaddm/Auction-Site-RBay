@@ -1,19 +1,18 @@
-import { Table, Column, Model, DataType, HasMany, BelongsToMany } from "sequelize-typescript";
+import {
+  Table,
+  Column,
+  Model,
+  DataType,
+  HasMany,
+  BelongsToMany,
+} from "sequelize-typescript";
 import { Bid } from "./bid";
 import { View } from "./view";
 import { Like } from "./like";
 import { Chat } from "./chat";
 import { Follow } from "./follow";
 
-@Table({
-  indexes: [
-    {
-      unique: true,
-      fields: ['email']
-    }
-  ],
-  timestamps: true,
-})
+@Table({ timestamps: true })
 export class User extends Model {
   @Column({ type: DataType.STRING, allowNull: false, unique: true })
   username!: string;
@@ -21,7 +20,11 @@ export class User extends Model {
   @Column({ type: DataType.STRING, allowNull: false })
   password!: string;
 
-  @Column({ type: DataType.STRING, allowNull: false, unique: true, validate: { isEmail: true } })
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
+    validate: { isEmail: true },
+  })
   email!: string;
 
   @Column({ type: DataType.STRING, allowNull: true })
@@ -51,9 +54,9 @@ export class User extends Model {
   @HasMany(() => Chat)
   chats!: Chat[];
 
-  @BelongsToMany(() => User, () => Follow, 'followerId', 'followingId')
+  @BelongsToMany(() => User, () => Follow, "followerId", "followingId")
   followings!: User[];
 
-  @BelongsToMany(() => User, () => Follow, 'followingId', 'followerId')
+  @BelongsToMany(() => User, () => Follow, "followingId", "followerId")
   followers!: User[];
 }
