@@ -10,7 +10,10 @@ import {
   Legend,
 } from 'recharts';
 
-function Chart() {
+function Chart({ bids }) {
+  const calcedBide = bids.forEach((element) => {
+    return { price: element.price, name: element.User.username };
+  });
   const [screenWidth, setScreenWidth] = useState(window.innerWidth);
 
   useEffect(() => {
@@ -34,7 +37,7 @@ function Chart() {
       <LineChart
         width={Math.min(screenWidth * 0.8, 800)}
         height={400}
-        data={data}
+        data={calcedBide}
         margin={{ top: 5, right: 20, bottom: 5, left: 0 }}
       >
         <CartesianGrid strokeDasharray="3 3" stroke="#ccc" />
@@ -42,17 +45,17 @@ function Chart() {
         <YAxis />
         <Legend />
         <Tooltip />
-        <Line type="monotone" dataKey="sales" stroke="#8884d8" />
+        <Line type="monotone" dataKey="price" stroke="#8884d8" />
       </LineChart>
     </Box>
   );
 }
 
-const data = [
-  { name: 'Jan', sales: 1000 },
-  { name: 'Ali', sales: 6000 },
-  { name: 'Reza', sales: 2000 },
-  { name: 'Ahmad', sales: 5000 },
-];
+// const data = [
+//   { name: 'Jan', sales: 1000 },
+//   { name: 'Ali', sales: 6000 },
+//   { name: 'Reza', sales: 2000 },
+//   { name: 'Ahmad', sales: 5000 },
+// ];
 
 export default Chart;

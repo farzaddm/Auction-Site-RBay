@@ -21,6 +21,27 @@ const sendHttp = async ({
   }
 };
 
+export const useLogin = () =>
+  useMutation({
+    mutationFn: (body) => {
+      return sendHttp({
+        endpoint: '/api/login',
+        method: 'POST',
+        body,
+      });
+    },
+  });
+
+export const useSignup = () =>
+  useMutation({
+    mutationFn: (body) =>
+      sendHttp({
+        endpoint: `/api/signup`,
+        body: body,
+        method: 'POST',
+      }),
+  });
+
 export const useGetItem = (query) => {
   return useQuery({
     queryKey: ['item'],
@@ -48,27 +69,6 @@ export const useGetItem = (query) => {
   });
 };
 
-export const useLogin = () =>
-  useMutation({
-    mutationFn: (body) => {
-      return sendHttp({
-        endpoint: '/api/login',
-        method: 'POST',
-        body,
-      });
-    },
-  });
-
-export const useSignup = () =>
-  useMutation({
-    mutationFn: (body) =>
-      sendHttp({
-        endpoint: `/api/signup`,
-        body: body,
-        method: 'POST',
-      }),
-  });
-
 export const useAddItem = () =>
   useMutation({
     mutationFn: (body) => {
@@ -80,6 +80,27 @@ export const useAddItem = () =>
       });
     },
   });
+
+export const useGetItembyId = (id) =>
+  useQuery({
+    queryFn: () =>
+      sendHttp({
+        endpoint: `/api/items/${id}`,
+        method: 'GET',
+      }),
+  });
+
+export const useLikeItem = () => {
+  return useMutation({
+    mutationFn: (body) => {
+      return sendHttp({
+        endpoint: '/api/items/like',
+        method: 'POST',
+        body: body,
+      });
+    },
+  });
+};
 
 // export const usePageRelation = () =>
 //   useMutation({
