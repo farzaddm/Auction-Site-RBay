@@ -10,13 +10,12 @@ import {
   Input,
 } from '@chakra-ui/react';
 import { FaRegHeart, FaHeart } from 'react-icons/fa';
-import { Link } from 'react-router-dom';
 import { Avatar } from '../components/ui/avatar';
 import { Blockquote } from '../components/ui/blockquote';
 import Chart from '../components/product/Chart';
-import { useGetItembyId, useLikeItem } from '../http/useHttp';
+import { useBidOnItem, useGetItembyId, useLikeItem } from '../http/useHttp';
 import { Toaster, toaster } from '../components/ui/toaster';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 function ProductDetail({ id }) {
   const { data, isLoading, isError, error } = useGetItembyId(id);
@@ -27,25 +26,43 @@ function ProductDetail({ id }) {
     isSuccess: isLikeSuccess,
     data: likeData,
   } = useLikeItem();
+  const {
+    mutate: bidMutate,
+    data: bidData,
+    isPending: isBidPending,
+    isError: isBidError,
+    error: bidError,
+    isSuccess: isBidSuccess,
+  } = useBidOnItem();
   const [remainingTime, setRemainingTime] = useState('');
+  const ref = useRef();
 
   useEffect(() => {
     if (isError && error) {
-      toaster.create({
-        title: error.message,
-        type: 'error',
-      });
+      toaster.create({ title: error.message, type: 'error' });
     }
     if (isLikeError) {
-      toaster.create({
-        title: 'Error liking the item',
-        type: 'error',
-      });
+      toaster.create({ title: 'Error liking the item', type: 'error' });
     }
     if (isLikeSuccess && likeData) {
       toaster.success({ title: likeData.message });
     }
-  }, [isError, error, isLikeError, isLikeSuccess, likeData]);
+    if (isBidError) {
+      toaster.error({ title: bidError.message || 'Error placing bid' });
+    }
+    if (isBidSuccess) {
+      toaster.success({ title: bidData });
+    }
+  }, [
+    isError,
+    error,
+    isLikeError,
+    isLikeSuccess,
+    likeData,
+    bidData,
+    isBidSuccess,
+    isBidError,
+  ]);
 
   useEffect(() => {
     if (data?.item?.expiredTime) {
@@ -71,20 +88,21 @@ function ProductDetail({ id }) {
 
   function handleLikeClick() {
     const userId = localStorage.getItem('userId');
-
     if (!userId) {
-      toaster.create({
-        title: 'User not logged in',
-        type: 'warning',
-      });
+      toaster.create({ title: 'Please log in to like items', type: 'warning' });
       return;
     }
+    mutate({ itemId: id, userId });
+  }
 
-    console.log('User ID:', userId);
-    mutate({
-      itemId: id,
-      userId,
-    });
+  function handlePlaceBidClick() {
+    const price = ref.current.value;
+    if (!price) {
+      toaster.create({ title: 'Please enter a bid amount', type: 'warning' });
+      return;
+    }
+    bidMutate({ price, itemId: id });
+    ref.current.value = ""
   }
 
   return (
@@ -178,8 +196,13 @@ function ProductDetail({ id }) {
               borderColor="whiteAlpha.700"
               type="number"
               placeholder="Place a bid"
+              ref={ref}
             />
-            <Button>Submit</Button>
+            {isBidPending ? (
+              <Text>Pending...</Text>
+            ) : (
+              <Button onClick={handlePlaceBidClick}>Submit</Button>
+            )}
           </Flex>
         </Box>
       </Flex>

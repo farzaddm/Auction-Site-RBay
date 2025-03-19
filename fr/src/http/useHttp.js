@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { useQuery, useMutation } from '@tanstack/react-query';
+import getQueryClient from '../query_client/query_client';
 
 const sendHttp = async ({
   endpoint,
@@ -83,6 +84,7 @@ export const useAddItem = () =>
 
 export const useGetItembyId = (id) =>
   useQuery({
+    queryKey: ['itemById'],
     queryFn: () =>
       sendHttp({
         endpoint: `/api/items/${id}`,
@@ -90,17 +92,33 @@ export const useGetItembyId = (id) =>
       }),
   });
 
-export const useLikeItem = () => {
-  return useMutation({
-    mutationFn: (body) => {
-      return sendHttp({
+export const useLikeItem = () =>
+  useMutation({
+    mutationFn: (body) =>
+      sendHttp({
         endpoint: '/api/items/like',
         method: 'POST',
         body: body,
-      });
+      }),
+    onSuccess: () => {
+      const queryClient = getQueryClient();
+      queryClient.invalidateQueries(['itemById']);
     },
   });
-};
+
+export const useBidOnItem = () =>
+  useMutation({
+    mutationFn: (body) =>
+      sendHttp({
+        endpoint: '/api/items/bid',
+        method: 'POST',
+        body,
+      }),
+    onSuccess: () => {
+      const queryClient = getQueryClient();
+      queryClient.invalidateQueries(['itemById']);
+    },
+  });
 
 // export const usePageRelation = () =>
 //   useMutation({
