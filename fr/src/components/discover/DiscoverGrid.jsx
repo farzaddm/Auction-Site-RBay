@@ -1,20 +1,31 @@
-import { Box, Grid, Heading } from '@chakra-ui/react';
+import { Box, Grid, Heading, Spinner, Text } from '@chakra-ui/react';
 import DiscoverCard from './DiscoverCard';
 import { useGetItem } from '../../http/useHttp';
 import { useEffect } from 'react';
+import { Toaster, toaster } from '../ui/toaster';
 
-function DiscoverGrid({ query }) {
-  const { data, isLoading, refetch, isError, error } = useGetItem();
+
+function DiscoverGrid({ queryParam }) {
+  const { data, isLoading, refetch, isError, error } = useGetItem(queryParam);
+
   useEffect(() => {
+    console.log(queryParam);
     refetch();
-  }, [query]);
+  }, []);
+
+  useEffect(() => {
+    if (isError) {
+      toaster.error({ title: error.message });
+    }
+  }, [isError, error]);
+
   return (
     <>
-      {isError ? (
-        <Box>
-          <Heading>{error.message}</Heading>
+      {isLoading ? (
+        <Box my={'auto'} mx={'auto'} width={'full'} textAlign={'center'}>
+          <Spinner size={'xl'} color={'teal.400'} borderWidth={'4px'} />
         </Box>
-      ) : (
+      ) : data && data.length > 0 ? (
         <Grid
           p={3}
           templateColumns={{
@@ -28,151 +39,28 @@ function DiscoverGrid({ query }) {
         >
           {data.map((item) => (
             <DiscoverCard
-              price={20}
-              badgeList={['Hot', 'Decoration']}
+              key={item.id}
+              price={item.price}
+              badgeList={item.badgeList}
               loading={false}
-              expire={'2 days'}
-              isFollowed={true}
-              id={'ali_Reza'}
-              image={'https://realrealreal-redis.s3.amazonaws.com/155.jpg'}
-              isLiked={true}
-              title={'Lorem ipsum dolor'}
-              userImage={'https://thispersondoesnotexist.com/'}
-              userName={'ali reza'}
+              expire={item.expire}
+              isFollowed={item.isFollowed}
+              id={item.id}
+              image={item.image}
+              isLiked={item.isLiked}
+              title={item.title}
+              userImage={item.userImage}
+              userName={item.userName}
             />
           ))}
-          <DiscoverCard
-            price={20}
-            badgeList={['Hot', 'Decoration']}
-            loading={false}
-            expire={'2 days'}
-            isFollowed={true}
-            id={'ali_Reza'}
-            image={'https://realrealreal-redis.s3.amazonaws.com/155.jpg'}
-            isLiked={true}
-            title={'Lorem ipsum dolor'}
-            userImage={'https://thispersondoesnotexist.com/'}
-            userName={'ali reza'}
-          />
-          <DiscoverCard
-            price={20}
-            badgeList={['Hot', 'Decoration']}
-            loading={false}
-            expire={'2 days'}
-            isFollowed={true}
-            id={'ali_Reza'}
-            image={'https://realrealreal-redis.s3.amazonaws.com/155.jpg'}
-            isLiked={true}
-            title={'Lorem ipsum dolor'}
-            userImage={'https://thispersondoesnotexist.com/'}
-            userName={'ali reza'}
-          />
-          <DiscoverCard
-            price={20}
-            badgeList={['Hot', 'Decoration']}
-            loading={false}
-            expire={'2 days'}
-            isFollowed={true}
-            id={'ali_Reza'}
-            image={'https://realrealreal-redis.s3.amazonaws.com/155.jpg'}
-            isLiked={true}
-            title={'Lorem ipsum dolor'}
-            userImage={'https://thispersondoesnotexist.com/'}
-            userName={'ali reza'}
-          />
-          <DiscoverCard
-            price={20}
-            badgeList={['Hot', 'Decoration']}
-            loading={false}
-            expire={'2 days'}
-            isFollowed={true}
-            id={'ali_Reza'}
-            image={'https://realrealreal-redis.s3.amazonaws.com/155.jpg'}
-            isLiked={true}
-            title={'Lorem ipsum dolor'}
-            userImage={'https://thispersondoesnotexist.com/'}
-            userName={'ali reza'}
-          />
-          <DiscoverCard
-            price={20}
-            badgeList={['Hot', 'Decoration']}
-            loading={false}
-            expire={'2 days'}
-            isFollowed={true}
-            id={'ali_Reza'}
-            image={'https://realrealreal-redis.s3.amazonaws.com/155.jpg'}
-            isLiked={true}
-            title={'Lorem ipsum dolor'}
-            userImage={'https://thispersondoesnotexist.com/'}
-            userName={'ali reza'}
-          />
-          <DiscoverCard
-            price={20}
-            badgeList={['Hot', 'Decoration']}
-            loading={false}
-            expire={'2 days'}
-            isFollowed={true}
-            id={'ali_Reza'}
-            image={'https://realrealreal-redis.s3.amazonaws.com/155.jpg'}
-            isLiked={true}
-            title={'Lorem ipsum dolor'}
-            userImage={'https://thispersondoesnotexist.com/'}
-            userName={'ali reza'}
-          />
-          <DiscoverCard
-            price={20}
-            badgeList={['Hot', 'Decoration']}
-            loading={false}
-            expire={'2 days'}
-            isFollowed={true}
-            id={'ali_Reza'}
-            image={'https://realrealreal-redis.s3.amazonaws.com/155.jpg'}
-            isLiked={true}
-            title={'Lorem ipsum dolor'}
-            userImage={'https://thispersondoesnotexist.com/'}
-            userName={'ali reza'}
-          />
-          <DiscoverCard
-            price={20}
-            badgeList={['Hot', 'Decoration']}
-            loading={false}
-            expire={'2 days'}
-            isFollowed={true}
-            id={'ali_Reza'}
-            image={'https://realrealreal-redis.s3.amazonaws.com/155.jpg'}
-            isLiked={true}
-            title={'Lorem ipsum dolor'}
-            userImage={'https://thispersondoesnotexist.com/'}
-            userName={'ali reza'}
-          />
-          <DiscoverCard
-            price={20}
-            badgeList={['Hot', 'Decoration']}
-            loading={false}
-            expire={'2 days'}
-            isFollowed={true}
-            id={'ali_Reza'}
-            image={'https://realrealreal-redis.s3.amazonaws.com/155.jpg'}
-            isLiked={true}
-            title={'Lorem ipsum dolor'}
-            userImage={'https://thispersondoesnotexist.com/'}
-            userName={'ali reza'}
-          />
-          <DiscoverCard
-            price={20}
-            badgeList={['Hot', 'Decoration']}
-            loading={false}
-            expire={'2 days'}
-            isFollowed={true}
-            id={'ali_Reza'}
-            image={'https://realrealreal-redis.s3.amazonaws.com/155.jpg'}
-            isLiked={true}
-            title={'Lorem ipsum dolor'}
-            userImage={'https://thispersondoesnotexist.com/'}
-            userName={'ali rezasdckadsckasjdn'}
-          />
         </Grid>
+      ) : (
+        <Box py={10} textAlign={'center'} width={'full'}>
+          <Heading>No Item found</Heading>
+          <Text>Change item filters to find items</Text>
+        </Box>
       )}
+      <Toaster />
     </>
   );
 }

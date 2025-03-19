@@ -19,7 +19,7 @@ function DiscoverPage() {
           gap={4}
         >
           <DiscoverFilter setQuery={setQueryParam} />
-          <DiscoverGrid query={queryParam} />
+          <DiscoverGrid key={queryParam} queryParam={queryParam} />
         </Flex>
       </Box>
     </Box>

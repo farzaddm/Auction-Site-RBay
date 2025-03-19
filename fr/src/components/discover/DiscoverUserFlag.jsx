@@ -20,7 +20,7 @@ function DiscoverUserFlag({ image, name, id, isFollowed, loading }) {
             isTruncated
             noOfLines={1}
           >
-            {name.length > 10 ? name.substring(0, 8) + '...' : name}
+            {name?.length > 10 ? name.substring(0, 8) + '...' : name}
           </Heading>
         </Skeleton>
 

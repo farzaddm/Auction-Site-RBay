@@ -54,14 +54,28 @@ function DiscoverFilter({ setQuery }) {
     control,
   } = useForm({
     resolver: '',
-    defaultValues: { slider: [0, 30] },
+    defaultValues: { slider: [1, 100] },
   });
 
   const onSubmit = handleSubmit((data) => {
     console.log(data);
-    let query = `sort=${data.sort || null}&ending=${
-      data.ending || null
-    }&category=${data.category || null}&hotness=${data.hotness || null}&price=${data.slider[0]},${data.slider[1]}`;
+    const queryParts = [];
+    if (data.sort) {
+      queryParts.push(`sort=${data.sort}`);
+    }
+    if (data.ending) {
+      queryParts.push(`ending=${data.ending}`);
+    }
+    if (data.category) {
+      queryParts.push(`category=${data.category}`);
+    }
+    if (data.hotness) {
+      queryParts.push(`hotness=${data.hotness}`);
+    }
+    if (data.slider && data.slider.length === 2) {
+      queryParts.push(`price=${data.slider[0]},${data.slider[1]}`);
+    }
+    const query = queryParts.join('&');
     setQuery(query);
   });
 
@@ -90,7 +104,7 @@ function DiscoverFilter({ setQuery }) {
                 <Slider
                   colorPalette="teal"
                   width="full"
-                  marks={[0, 25, 50, 75, 100]}
+                  marks={[1, 25, 50, 75, 100]}
                   step={0.1}
                   onFocusChange={({ focusedIndex }) => {
                     if (focusedIndex !== -1) return;

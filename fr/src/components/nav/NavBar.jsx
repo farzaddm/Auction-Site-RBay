@@ -10,13 +10,13 @@ import { FiMenu } from 'react-icons/fi';
 function NavBar() {
   const [isDrawerOpen, setDrawerOpen] = useState(false);
 
-  const openDrawer = (e) => {
-    if (e.key == 'Enter') {
-      setOpen(true);
-    }
-  };
+  // const openDrawer = (e) => {
+  //   if (e.key == 'Enter') {
+  //     setOpen(true);
+  //   }
+  // };
 
-  document.addEventListener('keypress', openDrawer);
+  // document.addEventListener('keypress', openDrawer);
 
   return (
     <>

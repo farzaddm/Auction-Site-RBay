@@ -17,6 +17,10 @@ import { useForm, Controller } from 'react-hook-form';
 import { Field } from '../components/ui/field';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useAddItem } from '../http/useHttp';
+import { useEffect } from 'react';
+import { Toaster, toaster } from '../components/ui/toaster';
+import { useNavigate } from 'react-router-dom';
 
 const formSchema = z.object({
   name: z
@@ -28,28 +32,45 @@ const formSchema = z.object({
     .min(10, 'Description must be at least 10 characters long.')
     .max(250, 'Description must be at most 250 characters long.'),
   duration: z.string({ message: 'Time duration must be selected.' }).array(),
+  price: z
+    .number()
+    .min(1, { message: 'starting price must be at least 1$' })
+    .max(100, { message: 'starting price must be at last 100$' }),
+  pic: z.string().url({ message: 'pic must be a url address' }),
 });
 
 function NewItem() {
   const {
     control,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    formState: { errors },
     register,
-    setError,
   } = useForm({
     resolver: zodResolver(formSchema),
   });
+  const { mutate, isPending, isError, error, isSuccess, data } = useAddItem();
+  const navigate = useNavigate();
 
   const onSubmit = (data) => {
-    // setError('root', { message: 'request failed' });
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        console.log(data);
-        resolve();
-      }, 1000);
-    });
+    const body = {
+      name: data.name,
+      duration: data.duration[0],
+      description: data.description,
+      pic: data.pic,
+      price: data.price,
+    };
+    mutate(body);
   };
+
+  useEffect(() => {
+    if (isSuccess) {
+      toaster.success({ title: data?.message });
+      navigate("/")
+    }
+    if (isError) {
+      toaster.error({ title: error?.message });
+    }
+  }, [isSuccess, isError]);
 
   return (
     <Box width={{ base: '90%', md: '75%', lg: '70%' }} mx={'auto'} pt={20}>
@@ -84,6 +105,39 @@ function NewItem() {
                   transition={'all .3s ease'}
                   _focus={{ backgroundColor: 'blackAlpha.900' }}
                   {...register('name')}
+                />
+              </Field>
+
+              <Field
+                mb={!errors.price ? '1.3rem' : 0}
+                label="Starting Price"
+                invalid={!!errors.price}
+                errorText={errors.price?.message}
+              >
+                <Input
+                  backgroundColor={'blackAlpha.700'}
+                  type="number"
+                  min={1}
+                  max={100}
+                  step={1}
+                  transition={'all .3s ease'}
+                  _focus={{ backgroundColor: 'blackAlpha.900' }}
+                  {...register('price', { valueAsNumber: true })}
+                />
+              </Field>
+
+              <Field
+                mb={!errors.pic ? '1.3rem' : 0}
+                label="Product Picture"
+                invalid={!!errors.pic}
+                errorText={errors.pic?.message}
+              >
+                <Input
+                  backgroundColor={'blackAlpha.700'}
+                  maxLength={70}
+                  transition={'all .3s ease'}
+                  _focus={{ backgroundColor: 'blackAlpha.900' }}
+                  {...register('pic')}
                 />
               </Field>
 
@@ -149,7 +203,7 @@ function NewItem() {
                 />
               </Field>
 
-              {isSubmitting ? (
+              {isPending ? (
                 <Spinner size={'md'} borderWidth="3px" m={2} />
               ) : (
                 <Button type="submit">Submit</Button>
@@ -167,6 +221,7 @@ function NewItem() {
               )}
             </Flex>
           </form>
+          <Toaster />
         </Box>
       </Box>
     </Box>
