@@ -16,8 +16,10 @@ import Chart from '../components/product/Chart';
 import { useBidOnItem, useGetItembyId, useLikeItem } from '../http/useHttp';
 import { Toaster, toaster } from '../components/ui/toaster';
 import { useEffect, useRef, useState } from 'react';
+import { useParams } from 'react-router-dom';
 
-function ProductDetail({ id }) {
+function ProductDetail() {
+  const { id } = useParams();
   const { data, isLoading, isError, error } = useGetItembyId(id);
   const {
     mutate,
@@ -102,7 +104,7 @@ function ProductDetail({ id }) {
       return;
     }
     bidMutate({ price, itemId: id });
-    ref.current.value = ""
+    ref.current.value = '';
   }
 
   return (

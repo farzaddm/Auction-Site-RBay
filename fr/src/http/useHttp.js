@@ -120,6 +120,29 @@ export const useBidOnItem = () =>
     },
   });
 
+export const useDashboardData = (userId) =>
+  useQuery({
+    queryKey: ['dashboard'],
+    queryFn: () =>
+      sendHttp({
+        endpoint: `/api/items/dashboard/${userId}`,
+        method: 'GET',
+      }),
+  });
+
+export const useDeleteItem = () =>
+  useMutation({
+    mutationFn: (id) =>
+      sendHttp({
+        endpoint: `/api/items/${id}`,
+        method: 'DELETE',
+      }),
+    onSuccess: () => {
+      const queryClient = getQueryClient();
+      queryClient.invalidateQueries(['dashboard']);
+    },
+  });
+
 // export const usePageRelation = () =>
 //   useMutation({
 //     mutationFn: (body) => {
