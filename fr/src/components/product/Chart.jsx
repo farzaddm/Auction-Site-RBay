@@ -11,7 +11,7 @@ import {
 } from 'recharts';
 
 function Chart({ bids }) {
-  const calcedBide = bids.forEach((element) => {
+  const calcedBide = bids?.forEach((element) => {
     return { price: element.price, name: element.User.username };
   });
   const [screenWidth, setScreenWidth] = useState(window.innerWidth);

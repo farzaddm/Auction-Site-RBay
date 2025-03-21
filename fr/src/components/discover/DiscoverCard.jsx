@@ -104,7 +104,7 @@ function DiscoverCard({
         {/* </Skeleton> */}
 
         {/* <Skeleton mt={2} loading={loading}> */}
-          <Button onClick={() => navigate('/product')} variant={'ghost'}>
+          <Button onClick={() => navigate(`/product/${id}`)} variant={'ghost'}>
             View
           </Button>
         {/* </Skeleton> */}
