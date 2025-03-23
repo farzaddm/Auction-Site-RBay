@@ -143,6 +143,30 @@ export const useDeleteItem = () =>
     },
   });
 
+export const useGetChat = (id) =>
+  useQuery({
+    queryKey: ['chat'],
+    queryFn: () =>
+      sendHttp({
+        endpoint: `/api/chat/${id}`,
+        method: 'GET',
+      }),
+  });
+
+export const usePostChat = (id) =>
+  useMutation({
+    mutationFn: (body) =>
+      sendHttp({
+        endpoint: `/api/chat/${id}`,
+        method: 'POST',
+        body,
+      }),
+    onSuccess: () => {
+      const queryClient = getQueryClient();
+      queryClient.invalidateQueries(['chat']);
+    },
+  });
+  
 // export const usePageRelation = () =>
 //   useMutation({
 //     mutationFn: (body) => {

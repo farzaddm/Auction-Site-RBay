@@ -17,6 +17,7 @@ import { useBidOnItem, useGetItembyId, useLikeItem } from '../http/useHttp';
 import { Toaster, toaster } from '../components/ui/toaster';
 import { useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import Chat from '../components/product/Chat';
 
 function ProductDetail() {
   const { id } = useParams();
@@ -209,7 +210,21 @@ function ProductDetail() {
         </Box>
       </Flex>
 
-      <Chart />
+      <Box
+        shadow="md"
+        width="full"
+        backgroundColor="blackAlpha.700"
+        p={10}
+        borderBottomRadius={10}
+        display="flex"
+        flexDirection={{ base: 'column', lg: 'row' }}
+        justifyContent="center"
+        alignItems="center"
+        gap={5}
+      >
+        <Chart />
+        <Chat chatList={data?.chats} />
+      </Box>
       <Toaster />
     </Box>
   );

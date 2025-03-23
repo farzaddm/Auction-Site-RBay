@@ -9,7 +9,7 @@ function Layout() {
   return (
     <>
       <Image
-        src="background.svg"
+        src="/background.svg"
         width={'full'}
         height={'full'}
         zIndex={-100}
