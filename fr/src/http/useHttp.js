@@ -166,7 +166,20 @@ export const usePostChat = (id) =>
       queryClient.invalidateQueries(['chat']);
     },
   });
-  
+
+export const useSearchItem = (text) =>
+  useQuery({
+    enabled: false,
+    queryKey: ['search'],
+    queryFn: () => {
+      console.log(text);
+      return sendHttp({
+        endpoint: `/api/item/search?searchQuery=${text}`,
+        method: 'GET',
+      });
+    },
+  });
+
 // export const usePageRelation = () =>
 //   useMutation({
 //     mutationFn: (body) => {

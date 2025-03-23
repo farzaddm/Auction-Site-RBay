@@ -1,22 +1,45 @@
 import { InputGroup } from '../ui/input-group';
-import { Box, Flex, Text, Input, Button, Icon } from '@chakra-ui/react';
+import {
+  Box,
+  Flex,
+  Text,
+  Input,
+  Button,
+  Icon,
+  Popover,
+  Portal,
+  Spinner,
+  VStack,
+} from '@chakra-ui/react';
 import { LuSearch } from 'react-icons/lu';
 import { Link } from 'react-router-dom';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import SideDrawer from './SideDrawer';
 import AvatarWithTooltip from './AvatarWithTooltip';
 import { FiMenu } from 'react-icons/fi';
+import { useSearchItem } from '../../http/useHttp';
+import { Toaster, toaster } from '../ui/toaster';
 
 function NavBar() {
   const [isDrawerOpen, setDrawerOpen] = useState(false);
+  const [isPopoverOpen, setPopoverOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const { data, isError, error, isLoading, refetch } =
+    useSearchItem(searchQuery);
 
-  // const openDrawer = (e) => {
-  //   if (e.key == 'Enter') {
-  //     setOpen(true);
-  //   }
-  // };
+  useEffect(() => {
+    if (isError) {
+      toaster.error({ title: error.message });
+    }
+  }, [isError]);
 
-  // document.addEventListener('keypress', openDrawer);
+  const handleChange = (e) => {
+    if (e.key == 'Enter') {
+      console.log(e.target.value);
+      setSearchQuery(e.target.value);
+      refetch();
+    }
+  };
 
   return (
     <>
@@ -39,38 +62,82 @@ function NavBar() {
             display={'flex'}
             flexDirection={'row'}
             alignItems={'center'}
-            width={'30%'}
             maxW={'5.5rem'}
             position="relative"
             justifyContent={'space-between'}
           >
-            <Icon size={'lg'} onClick={() => setDrawerOpen(true)} cursor={'pointer'}>
+            <Icon
+              size={'lg'}
+              onClick={() => setDrawerOpen(true)}
+              cursor={'pointer'}
+            >
               <FiMenu />
             </Icon>
-            <Text color={'green.400'} fontWeight={'bolder'}>
+            <Text
+              display={{ base: 'none', md: 'block' }}
+              color={'green.400'}
+              fontWeight={'bolder'}
+              ml={3}
+            >
               <Link to={'/'}>Rbay</Link>
             </Text>
           </Box>
 
-          <Box flex="1" display={{ base: 'none', md: 'block' }}>
-            <InputGroup startElement={<LuSearch />}>
-              <Input
-                placeholder="Search"
-                variant="subtle"
-                transition="ease-out"
-                transitionDuration=".3s"
-                _focus={{ width: { base: '20rem', lg: '30rem' } }}
-                padding=".3rem"
-              />
-            </InputGroup>
+          <Box flex="1" display={{ base: 'block', md: 'block' }}>
+            <Box position={'relative'} mx={'auto'} maxW={'30rem'}>
+              <InputGroup
+                onFocus={() => setPopoverOpen(true)}
+                onBlur={() => setPopoverOpen(false)}
+                m={0}
+                startElement={<LuSearch />}
+              >
+                <Input
+                  width={'full'}
+                  placeholder="Search"
+                  variant="subtle"
+                  transition="ease-out"
+                  transitionDuration=".3s"
+                  _focus={{ width: { md: '20rem', lg: '30rem' } }}
+                  padding=".3rem"
+                  onKeyDown={(e) => handleChange(e)}
+                  // ref={ref.current}
+                />
+              </InputGroup>
+
+              <Box
+                display={isPopoverOpen ? 'block' : 'none'}
+                position={'absolute'}
+                top={'3.2rem'}
+                backgroundColor={'gray.800/90'}
+                left={0}
+                right={0}
+                zIndex={20000}
+                transition={'all .3s ease'}
+              >
+                {isLoading ? (
+                  <Spinner color={'teal.400'} m={4} size={'lg'} />
+                ) : (
+                  data && (
+                    <VStack>
+                      {data?.map((item) => (
+                        <VStack backgroundColor={'teal.800'} my={2}>
+                          <Heading>{item.name}</Heading>
+                          <Text>{item.description}</Text>
+                        </VStack>
+                      ))}
+                    </VStack>
+                  )
+                )}
+              </Box>
+            </Box>
           </Box>
 
           <AvatarWithTooltip name="New User" />
-
         </Flex>
       </Box>
 
       <SideDrawer open={isDrawerOpen} setOpen={setDrawerOpen} />
+      <Toaster />
     </>
   );
 }
