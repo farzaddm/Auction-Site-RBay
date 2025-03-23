@@ -80,7 +80,7 @@ function Chat({ itemId }) {
           </>
         )}
       </Box>
-      <Toaster />
+      {/* <Toaster /> */}
     </VStack>
   );
 }

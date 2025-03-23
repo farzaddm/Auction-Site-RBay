@@ -225,7 +225,7 @@ function ProductDetail() {
         <Chart />
         <Chat chatList={data?.chats} />
       </Box>
-      <Toaster />
+      {/* <Toaster /> */}
     </Box>
   );
 }

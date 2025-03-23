@@ -137,7 +137,7 @@ function NavBar() {
       </Box>
 
       <SideDrawer open={isDrawerOpen} setOpen={setDrawerOpen} />
-      <Toaster />
+      {/* <Toaster /> */}
     </>
   );
 }

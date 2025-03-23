@@ -60,7 +60,7 @@ function DiscoverGrid({ queryParam }) {
           <Text>Change item filters to find items</Text>
         </Box>
       )}
-      <Toaster />
+      {/* <Toaster /> */}
     </>
   );
 }

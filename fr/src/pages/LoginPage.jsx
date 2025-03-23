@@ -200,7 +200,7 @@ function LoginPage() {
           Sign Up
         </Text>
       </Box>
-      <Toaster />
+      {/* <Toaster /> */}
     </Flex>
   );
 }
