@@ -14,10 +14,11 @@ import { Avatar } from '../components/ui/avatar';
 import { Blockquote } from '../components/ui/blockquote';
 import Chart from '../components/product/Chart';
 import { useBidOnItem, useGetItembyId, useLikeItem } from '../http/useHttp';
-import { Toaster, toaster } from '../components/ui/toaster';
+import { toaster } from '../components/ui/toaster';
 import { useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import Chat from '../components/product/Chat';
+import dateFormatter from '../query_client/dateReformater';
 
 function ProductDetail() {
   const { id } = useParams();
@@ -37,7 +38,6 @@ function ProductDetail() {
     error: bidError,
     isSuccess: isBidSuccess,
   } = useBidOnItem();
-  const [remainingTime, setRemainingTime] = useState('');
   const ref = useRef();
 
   useEffect(() => {
@@ -190,7 +190,7 @@ function ProductDetail() {
           <Flex justifyContent="space-between" mt={5}>
             <Text>High Bid: {data?.item?.price}$</Text>
             <Text>Bids: {data?.bids?.length || 0}</Text>
-            <Text>Ending: {remainingTime}</Text>
+            <Text>Ending: {dateFormatter(data?.expire)}</Text>
           </Flex>
 
           <Flex mt={6} gap={2}>

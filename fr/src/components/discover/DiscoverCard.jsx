@@ -12,6 +12,7 @@ import { FaHeart } from 'react-icons/fa';
 import DiscoverUserFlag from './DiscoverUserFlag';
 import { useNavigate } from 'react-router-dom';
 import { Skeleton } from '../ui/skeleton';
+import dateFormatter from '../../query_client/dateReformater';
 
 function DiscoverCard({
   badgeList,
@@ -27,6 +28,7 @@ function DiscoverCard({
   price,
 }) {
   const navigate = useNavigate();
+  const formattedDate = dateFormatter(expire)
 
   return (
     <Flex
@@ -71,7 +73,7 @@ function DiscoverCard({
       {/* </Skeleton> */}
       {/* <Skeleton loading={loading} h={'3'} mt={1}> */}
         <Text pb={3} textAlign={'start'} color={'whiteAlpha.600'}>
-          {expire}
+          {formattedDate}
         </Text>
       {/* </Skeleton> */}
 
