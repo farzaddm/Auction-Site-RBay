@@ -47,7 +47,7 @@ const signupSchema = z
 function SignupPage() {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
-  const { mutate, error, isError, isPending } = useSignup();
+  const { mutate, error, isError, isPending, data, isSuccess } = useSignup();
 
   const {
     register,
@@ -70,7 +70,12 @@ function SignupPage() {
         description: error.message,
       });
     }
-  }, [isError]);
+    if (isSuccess) {
+      toaster.success({title:"Signed up successfully. redirecting..."})
+      localStorage.setItem("token", data.token)
+      navigate("/")
+    }
+  }, [isError, isSuccess]);
 
   return (
     <Flex
@@ -229,7 +234,7 @@ function SignupPage() {
           Login
         </Text>
       </Box>
-      {/* <Toaster /> */}
+      <Toaster />
     </Flex>
   );
 }

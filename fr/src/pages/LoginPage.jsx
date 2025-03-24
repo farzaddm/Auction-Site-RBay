@@ -34,7 +34,7 @@ const loginSchema = z.object({
 function LoginPage() {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
-  const { data, mutate, isPending, isError, error } = useLogin();
+  const { data, mutate, isPending, isError, error, isSuccess } = useLogin();
 
   const {
     register,
@@ -59,7 +59,12 @@ function LoginPage() {
         description: error.message,
       });
     }
-  }, [isError]);
+    if (isSuccess) {
+      localStorage.setItem("token", data.token)
+      toaster.success({ title: "Logged in successfully. redirecting..." })
+      navigate("/")
+    }
+  }, [isError, isSuccess]);
 
   return (
     <Flex
@@ -200,7 +205,7 @@ function LoginPage() {
           Sign Up
         </Text>
       </Box>
-      {/* <Toaster /> */}
+      <Toaster />
     </Flex>
   );
 }

@@ -9,6 +9,7 @@ import NewItem from './pages/NewItem';
 import DiscoverPage from './pages/DiscoverPage';
 import LoginPage from './pages/LoginPage';
 import SignupPage from './pages/SignupPage';
+import CompleteInfo from './pages/CompleteInfo';
 
 const router = createBrowserRouter([
   {
@@ -42,6 +43,10 @@ const router = createBrowserRouter([
       {
         path: 'discover',
         element: <DiscoverPage />,
+      },
+      {
+        path: 'info',
+        element: <CompleteInfo />,
       },
     ],
   },

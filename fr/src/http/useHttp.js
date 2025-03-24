@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import getQueryClient from '../query_client/query_client';
+import { redirect } from 'react-router-dom';
 
 const sendHttp = async ({
   endpoint,
@@ -180,6 +181,29 @@ export const useSearchItem = (text) =>
     },
   });
 
+export const useGetUser = (id) =>
+  useQuery({
+    queryKey: ['user', id],
+    queryFn: () =>
+      sendHttp({
+        endpoint: `/api/user/${id}`,
+        method: 'GET',
+      }),
+  });
+
+export const usePostUserInfo = (id) =>
+  useMutation({
+    mutationFn: (body) =>
+      sendHttp({
+        endpoint: `/api/user/?id=${id}`,
+        method: 'POST',
+        body
+      }),
+    onSuccess: () => {
+      const queryClient = getQueryClient();
+      queryClient.invalidateQueries(['user', id]);
+    },
+  });
 // export const usePageRelation = () =>
 //   useMutation({
 //     mutationFn: (body) => {
