@@ -11,6 +11,7 @@ import { View } from "./view";
 import { Like } from "./like";
 import { Chat } from "./chat";
 import { Follow } from "./follow";
+import { Item } from "./item";
 
 @Table({ timestamps: true })
 export class User extends Model {
@@ -41,6 +42,9 @@ export class User extends Model {
 
   @Column({ type: DataType.STRING, allowNull: true })
   location!: string;
+
+  @HasMany(() => Item)
+  items!: Item[];
 
   @HasMany(() => Bid)
   bids!: Bid[];

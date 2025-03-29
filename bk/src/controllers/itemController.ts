@@ -6,14 +6,15 @@ import { Like } from "../models/like";
 import { View } from "../models/view";
 import { Bid } from "../models/bid";
 import { Chat } from "../models/chat";
-import jwt from "jsonwebtoken";
+// import jwt from "jsonwebtoken";
 
 export const createItem = async (
   req: Request,
   res: Response
 ): Promise<Response> => {
   try {
-    const { name, description, price, pic, duration } = req.body;
+    const userId = req.userId;
+    const { name, description, price, pic, duration, category } = req.body;
 
     if (!name || !description || !duration) {
       return res
@@ -22,28 +23,14 @@ export const createItem = async (
     }
 
     const newItem = await Item.create({
+      userId,
       name,
       description,
       price,
       pic,
       duration,
+      category,
     });
-
-    // const itemData = {
-    //   id: newItem.id.toString(),
-    //   name: newItem.name,
-    //   description: newItem.description,
-    //   price: newItem.price.toString(),
-    //   pic: newItem.pic,
-    //   views: newItem.views.toString(),
-    //   likes: newItem.likes.toString(),
-    //   duration: newItem.duration.toString(),
-    // };
-
-    // Cache the new item
-    // const cacheKey = itemKey(newItem.id.toString());
-    // await redisClient.hSet(cacheKey, itemData);
-    // await redisClient.expire(cacheKey, EXPIRATION_TIME); // Cache for 1 day
 
     return res.status(201).json({
       message: "Item created successfully",
@@ -62,24 +49,7 @@ export const getItemById = async (
   res: Response
 ): Promise<Response> => {
   const { id } = req.params;
-  // const authHeader = req.headers.authorization;
-  let userId: string | null = null;
-
-  // if (authHeader) {
-  //   const tokenParts = authHeader.split(".");
-  //   if (tokenParts.length === 3) {
-  //     try {
-  //       const decoded: any = jwt.verify(authHeader, "your_jwt_secret");
-  //       userId = decoded.userId || null;
-  //     } catch (error) {
-  //       console.error("Invalid token:", error);
-  //       return res.status(401).json({ message: "Invalid or expired token" });
-  //     }
-  //   } else {
-  //     console.error("Malformed token");
-  //     return res.status(400).json({ message: "Malformed token" });
-  //   }
-  // }
+  const { userId } = req.body;
 
   try {
     const item = await Item.findByPk(id, {
@@ -111,7 +81,7 @@ export const getItemById = async (
       return res.status(404).json({ message: "Item not found" });
     }
 
-    await viewItem(userId, item.id);
+    if (userId) await viewItem(userId, item.id);
 
     const liked = userId
       ? await Like.findOne({ where: { userId, itemId: id } })
@@ -151,7 +121,8 @@ export const likeItem = async (
   req: Request,
   res: Response
 ): Promise<Response> => {
-  const { userId, itemId } = req.body;
+  const { itemId } = req.body;
+  const userId = req.userId;
 
   try {
     const item = await Item.findByPk(itemId);
@@ -187,24 +158,7 @@ export const bidOnItem = async (
   res: Response
 ): Promise<Response> => {
   const { itemId, price } = req.body;
-  const authHeader = req.headers.authorization;
-  let userId: number | null = null;
-
-  if (authHeader) {
-    const tokenParts = authHeader.split(".");
-    if (tokenParts.length === 3) {
-      try {
-        const decoded: any = jwt.verify(authHeader, "your_jwt_secret");
-        userId = decoded.userId || null;
-      } catch (error) {
-        console.error("Invalid token:", error);
-        return res.status(401).json({ message: "Invalid or expired token" });
-      }
-    } else {
-      console.error("Malformed token");
-      return res.status(400).json({ message: "Malformed token" });
-    }
-  }
+  const userId = req.userId;
 
   try {
     const item = await Item.findByPk(itemId);
@@ -212,7 +166,7 @@ export const bidOnItem = async (
       return res.status(404).json({ message: "Item not found" });
     }
 
-    const user = await User.findByPk(userId as number);
+    const user = await User.findByPk(userId);
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
@@ -384,7 +338,7 @@ export const search = async (
   res: Response
 ): Promise<Response> => {
   const { searchQuery } = req.query;
-  
+
   if (!searchQuery || typeof searchQuery !== "string")
     return res.status(400).json({ error: "Invalid search query" });
 

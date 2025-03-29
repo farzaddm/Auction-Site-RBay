@@ -1,5 +1,8 @@
 import { Request, Response } from "express";
 import { User } from "../models/user";
+import { Follow } from "../models/follow";
+import { Item } from "../models/item";
+// import jwt from "jsonwebtoken";
 // import redisClient from "../DB/redisClient";
 // import { userKey } from "../utils/keys";
 
@@ -9,8 +12,8 @@ export const getUserById = async (
   req: Request,
   res: Response
 ): Promise<Response> => {
-  const { id } = req.params;
   try {
+    const { id } = req.params;
     // const cacheKey = userKey(id);
     // const cachedUser = await redisClient.hGetAll(cacheKey);
 
@@ -23,7 +26,7 @@ export const getUserById = async (
       return res.status(404).json({ message: "User not found." });
     }
 
-    const userData = { // give following
+    const userData = {
       id: user.id.toString(),
       name: user.username,
       email: user.email,
@@ -50,9 +53,9 @@ export const updateUser = async (
   req: Request,
   res: Response
 ): Promise<Response> => {
-  const { id } = req.params;
+  const id = req.userId;
   const { name, password, email, ...optionalFields } = req.body;
-  try {
+  try {    
     const user = await User.findByPk(id);
     if (!user) {
       return res.status(404).json({ message: "User not found." });
@@ -91,5 +94,98 @@ export const updateUser = async (
     return res
       .status(500)
       .json({ message: "Server error, could not update user" });
+  }
+};
+
+export const getUserFollowers = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
+  try {    
+    const userId = parseInt(req.body.userId);
+
+    const userFollowers = await User.findByPk(userId, {
+      include: [
+        {
+          model: User,
+          as: "followers",
+          attributes: ["id", "username", "email", "pic"],
+        },
+      ],
+    });
+    if (!userFollowers)
+      return res.status(404).json({ message: "User donot have follower" });
+    return res.json({
+      followers: userFollowers.followers || [],
+    });
+  } catch (error) {
+    console.error("Error fetching followers: ", error);
+    return res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+export const followUser = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
+  try {
+    const followerId = parseInt(req.userId);
+    const followingId = parseInt(req.params.userId);
+
+    if (followerId === followingId)
+      return res.status(400).json({ error: "Cannot follow yourself" });
+
+    const [follower, following] = await Promise.all([
+      User.findByPk(followerId),
+      User.findByPk(followingId),
+    ]);
+
+    if (!follower || !following)
+      return res.status(404).json({ error: "User not found" });
+
+    const existingFollow = await Follow.findOne({
+      where: { followerId, followingId },
+    });
+    if (existingFollow)
+      return res.status(400).json({ error: "Already following this user" });
+
+    await Follow.create({ followerId, followingId });
+
+    return res.status(201).json({
+      message: "Successfully followed user",
+      followerId,
+      followingId,
+    });
+  } catch (error) {
+    console.error("Follow error: ", error);
+    return res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+export const getUserItems = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
+  try {
+    const {userId} = req.body;
+    const user = await User.findByPk(userId, {
+      include: [
+        {
+          model: Item,
+          as: "items",    
+          attributes: { exclude: ["userId"] },
+        },
+      ],
+    });
+    if (!user) return res.status(404).json({ error: "User not found" });
+
+    const items = (user as any).items || [];
+    return res.json({
+      userId,
+      items,
+    });
+  } catch (error) {
+    console.error("Error fetching user items:", error);
+    return res.status(500).json({ error: "Internal server error" });
   }
 };

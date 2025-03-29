@@ -1,5 +1,6 @@
 import express from "express";
 import cors from "cors";
+import cookieParser from 'cookie-parser';
 import itemRoutes from "./src/routes/itemRoutes";
 import userRoutes from "./src/routes/userRoutes";
 import authRoutes from "./src/routes/authRoutes";
@@ -14,6 +15,7 @@ dotenv.config();
 
 const app = express();
 
+app.use(cookieParser());
 app.use(express.json());
 app.use(morgan("dev"));
 app.use(cors({ origin: "http://localhost:5173" }));
@@ -21,7 +23,6 @@ app.use(cors({ origin: "http://localhost:5173" }));
 app.use("/api/items", itemRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/auth", authRoutes);
-app.use("/api/user", userRoutes);
 app.use("/api/chat", chatRoutes);
 
 const PORT = process.env.PORT || 3000;
