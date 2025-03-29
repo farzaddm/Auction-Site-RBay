@@ -2,7 +2,7 @@ import { Table, Column, Model, DataType, ForeignKey, BelongsTo } from "sequelize
 import { User } from "./user";
 import { Item } from "./item";
 
-@Table
+@Table({ timestamps: true })
 export class Chat extends Model {
   @Column({ type: DataType.TEXT, allowNull: false })
   message!: string;

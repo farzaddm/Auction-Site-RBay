@@ -1,7 +1,7 @@
 import { Table, Column, Model, ForeignKey, DataType } from "sequelize-typescript";
 import { User } from "./user";
 
-@Table
+@Table({ timestamps: true })
 export class Follow extends Model {
   @ForeignKey(() => User)
   @Column({

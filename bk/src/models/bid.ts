@@ -2,10 +2,10 @@ import { Table, Column, Model, DataType, ForeignKey, BelongsTo } from "sequelize
 import { User } from "./user";
 import { Item } from "./item";
 
-@Table
+@Table({ timestamps: true })
 export class Bid extends Model {
   @Column({ type: DataType.DECIMAL(10, 2), allowNull: false })
-  bidAmount!: number;
+  price!: number;
 
   @ForeignKey(() => User)
   @Column({ type: DataType.INTEGER, allowNull: false })
