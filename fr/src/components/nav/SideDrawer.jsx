@@ -55,7 +55,7 @@ function SideDrawer({ open, setOpen }) {
           </DrawerTitle>
         </DrawerHeader>
         <DrawerBody>
-          <InputGroup
+          {/* <InputGroup
             my={2}
             mx={'auto'}
             display={{ base: 'block', md: 'none' }}
@@ -63,7 +63,7 @@ function SideDrawer({ open, setOpen }) {
             startElement={<LuSearch />}
           >
             <Input placeholder="Search" variant="subtle" />
-          </InputGroup>
+          </InputGroup> */}
 
           <Box mb={5}>
             <DrawerStack />

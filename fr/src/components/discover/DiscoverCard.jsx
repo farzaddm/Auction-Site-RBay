@@ -12,6 +12,7 @@ import { FaHeart } from 'react-icons/fa';
 import DiscoverUserFlag from './DiscoverUserFlag';
 import { useNavigate } from 'react-router-dom';
 import { Skeleton } from '../ui/skeleton';
+import dateFormatter from '../../query_client/dateReformater';
 
 function DiscoverCard({
   badgeList,
@@ -27,6 +28,7 @@ function DiscoverCard({
   price,
 }) {
   const navigate = useNavigate();
+  const formattedDate = dateFormatter(expire)
 
   return (
     <Flex
@@ -46,7 +48,7 @@ function DiscoverCard({
         image={userImage}
       />
 
-      <Skeleton h={'32'} my={2} loading={loading}>
+      {/* <Skeleton h={'32'} my={2} loading={loading}> */}
         <Image
           rounded={'md'}
           my={4}
@@ -54,9 +56,9 @@ function DiscoverCard({
           width={'100%'}
           height={{ base: 24, md: 28 }}
         />
-      </Skeleton>
+      {/* </Skeleton> */}
 
-      <Skeleton h={'6'} loading={loading}>
+      {/* <Skeleton h={'6'} loading={loading}> */}
         <Heading
           textAlign={'start'}
           fontWeight={'bold'}
@@ -64,33 +66,33 @@ function DiscoverCard({
         >
           {title}
         </Heading>
-      </Skeleton>
+      {/* </Skeleton> */}
 
-      <Skeleton h={"4"} mt={2} loading={loading}>
-        <Text textAlign={"start"} color={"whiteAlpha.800"}>${price.toFixed(2)}</Text>
-      </Skeleton>
-      <Skeleton loading={loading} h={'3'} mt={1}>
+      {/* <Skeleton h={"4"} mt={2} loading={loading}> */}
+        <Text textAlign={"start"} color={"whiteAlpha.800"}>${price?.toFixed(2)}</Text>
+      {/* </Skeleton> */}
+      {/* <Skeleton loading={loading} h={'3'} mt={1}> */}
         <Text pb={3} textAlign={'start'} color={'whiteAlpha.600'}>
-          {expire}
+          {formattedDate}
         </Text>
-      </Skeleton>
+      {/* </Skeleton> */}
 
-      <Skeleton mt={4} loading={loading}>
+      {/* <Skeleton mt={4} loading={loading}> */}
         <HStack mt={4}>
-          {badgeList.map((badge) => (
+          {badgeList?.map((badge) => (
             <Badge colorPalette={badge == 'Hot' ? 'red' : 'gray'}>
               {badge}
             </Badge>
           ))}
         </HStack>
-      </Skeleton>
+      {/* </Skeleton> */}
 
       <Flex
         justifyContent={'space-between'}
         alignItems={'center'}
         flexWrap="wrap"
       >
-        <Skeleton h={'4'} loading={loading}>
+        {/* <Skeleton h={'4'} loading={loading}> */}
           <Flex alignItems="center" gap={1}>
             <Icon
               as={FaHeart}
@@ -101,13 +103,13 @@ function DiscoverCard({
               100K
             </Text>
           </Flex>
-        </Skeleton>
+        {/* </Skeleton> */}
 
-        <Skeleton mt={2} loading={loading}>
-          <Button onClick={() => navigate('/product')} variant={'ghost'}>
+        {/* <Skeleton mt={2} loading={loading}> */}
+          <Button onClick={() => navigate(`/product/${id}`)} variant={'ghost'}>
             View
           </Button>
-        </Skeleton>
+        {/* </Skeleton> */}
       </Flex>
     </Flex>
   );
