@@ -41,6 +41,7 @@ function LoginPage() {
     handleSubmit,
     formState: { isSubmitting, errors },
     setValue,
+    getValues,
   } = useForm({
     resolver: zodResolver(loginSchema),
   });
@@ -60,9 +61,11 @@ function LoginPage() {
       });
     }
     if (isSuccess) {
-      localStorage.setItem("token", data.token)
-      toaster.success({ title: "Logged in successfully. redirecting..." })
-      navigate("/")
+      localStorage.setItem('token', data.token);
+      localStorage.setItem('userId', data.userId);
+      localStorage.setItem('userName', getValues('username'));
+      toaster.success({ title: 'Logged in successfully. redirecting...' });
+      navigate('/');
     }
   }, [isError, isSuccess]);
 

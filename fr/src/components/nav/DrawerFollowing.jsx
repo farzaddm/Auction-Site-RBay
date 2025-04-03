@@ -8,7 +8,7 @@ function DrawerFollowing() {
         Following List
       </Heading>
       <Stack
-        height={'38vh'}
+        height={'45vh'}
         overflowY={'auto'}
         mt={4}
         mx={2}

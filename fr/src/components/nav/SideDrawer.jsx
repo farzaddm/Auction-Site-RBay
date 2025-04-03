@@ -26,7 +26,7 @@ function SideDrawer({ open, setOpen }) {
     >
       <DrawerBackdrop />
       <DrawerContent>
-        <DrawerHeader>
+        {/* <DrawerHeader>
           <DrawerTitle textAlign={'start'}>
             <Flex
               justifyContent={'left'}
@@ -53,7 +53,7 @@ function SideDrawer({ open, setOpen }) {
               </Flex>
             </Flex>
           </DrawerTitle>
-        </DrawerHeader>
+        </DrawerHeader> */}
         <DrawerBody>
           {/* <InputGroup
             my={2}
@@ -72,11 +72,13 @@ function SideDrawer({ open, setOpen }) {
           <DrawerFollowing />
         </DrawerBody>
         <DrawerFooter>
-          <DrawerActionTrigger>
-            <Button variant="subtle" colorPalette={'red'}>
-              Log Out
-            </Button>
-          </DrawerActionTrigger>
+          {localStorage.getItem('token') && (
+            <DrawerActionTrigger>
+              <Button variant="subtle" colorPalette={'red'}>
+                Log Out
+              </Button>
+            </DrawerActionTrigger>
+          )}
           <DrawerActionTrigger asChild>
             <Button variant="outline" colorPalette="red">
               Close

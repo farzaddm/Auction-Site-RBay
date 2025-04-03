@@ -4,7 +4,7 @@ import DiscoverFilter from '../components/discover/DiscoverFilter';
 import { useState } from 'react';
 
 function DiscoverPage() {
-  const [queryParam, setQueryParam] = useState('');
+  const [queryParam, setQueryParam] = useState('price=1,1000');
   return (
     <Box pt={'28'} width={{ base: '95%', md: '95%' }} mx={'auto'}>
       <Box

@@ -9,37 +9,15 @@ function DrawerStack() {
       mx={2}
       separator={<StackSeparator color={'whiteAlpha.900'} />}
     >
-      <Heading size={'md'} textAlign={'left'}>
-        <DrawerActionTrigger onClick={() => redirect('/')}>
-          <Link style={{ padding: '.2rem' }} to="/">
-            Home
-          </Link>
-        </DrawerActionTrigger>
-      </Heading>
-
-      <Heading size={'md'} textAlign={'left'}>
-        <DrawerActionTrigger>
-          <Link style={{ padding: '.2rem' }} to="/dashboard">
-            Dashboard
-          </Link>
-        </DrawerActionTrigger>
-      </Heading>
-
-      <Heading size={'md'} textAlign={'left'}>
-        <DrawerActionTrigger>
-          <Link style={{ padding: '.2rem' }} to="/new">
-            Add Item
-          </Link>
-        </DrawerActionTrigger>
-      </Heading>
-
-      <Heading size={'md'} textAlign={'left'}>
-        <DrawerActionTrigger>
-          <Link style={{ padding: '.2rem' }} to="/discover">
-            Discover
-          </Link>
-        </DrawerActionTrigger>
-      </Heading>
+      {items.map((item) => (
+        <Heading size={'md'} textAlign={'left'}>
+          <DrawerActionTrigger onClick={() => redirect(item.address)}>
+            <Link style={{ padding: '.2rem' }} to={item.address}>
+              {item.name}
+            </Link>
+          </DrawerActionTrigger>
+        </Heading>
+      ))}
 
       {/* <Heading colorPalette={'red'} size={'md'} textAlign={'left'}>
         <DrawerActionTrigger colorPalette={'red'}>
@@ -51,5 +29,28 @@ function DrawerStack() {
     </Stack>
   );
 }
+
+const items = [
+  {
+    name: 'home',
+    address: '/',
+  },
+  {
+    name: 'dashboard',
+    address: '/dashboard',
+  },
+  {
+    name: 'add item',
+    address: '/new',
+  },
+  {
+    name: 'discover',
+    address: '/discover',
+  },
+  {
+    name: 'info',
+    address: '/info',
+  },
+];
 
 export default DrawerStack;

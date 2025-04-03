@@ -28,7 +28,6 @@ const ending = createListCollection({
 
 const category = createListCollection({
   items: [
-    { label: 'Hot Items', value: 'hot' },
     { label: 'Decorative', value: 'decorative' },
     { label: 'Furniture', value: 'furniture' },
     { label: 'Electronics', value: 'electronics' },
@@ -54,7 +53,7 @@ function DiscoverFilter({ setQuery }) {
     control,
   } = useForm({
     resolver: '',
-    defaultValues: { slider: [1, 100] },
+    defaultValues: { slider: [1, 1000] },
   });
 
   const onSubmit = handleSubmit((data) => {
@@ -104,8 +103,10 @@ function DiscoverFilter({ setQuery }) {
                 <Slider
                   colorPalette="teal"
                   width="full"
-                  marks={[1, 25, 50, 75, 100]}
-                  step={0.1}
+                  min={1}
+                  max={1000}
+                  marks={[1, 250, 500, 750, 1000]} 
+                  step={1}
                   onFocusChange={({ focusedIndex }) => {
                     if (focusedIndex !== -1) return;
                     field.onBlur();

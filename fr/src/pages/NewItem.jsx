@@ -37,6 +37,7 @@ const formSchema = z.object({
     .min(1, { message: 'starting price must be at least 1$' })
     .max(100, { message: 'starting price must be at last 100$' }),
   pic: z.string().url({ message: 'pic must be a url address' }),
+  category: z.string({ message: 'category must be selected' }).array(),
 });
 
 function NewItem() {
@@ -54,10 +55,12 @@ function NewItem() {
   const onSubmit = (data) => {
     const body = {
       name: data.name,
-      duration: data.duration[0],
+      duration: 300,
+      // duration: data.duration[0],
       description: data.description,
       pic: data.pic,
       price: data.price,
+      category: data.category[0],
     };
     mutate(body);
   };
@@ -65,7 +68,7 @@ function NewItem() {
   useEffect(() => {
     if (isSuccess) {
       toaster.success({ title: data?.message });
-      navigate("/")
+      navigate('/');
     }
     if (isError) {
       toaster.error({ title: error?.message });
@@ -203,6 +206,51 @@ function NewItem() {
                 />
               </Field>
 
+              <Field
+                mb={!errors.category ? '1.3rem' : 0}
+                label="Category"
+                invalid={!!errors.category}
+                errorText={errors.category?.message}
+              >
+                <Controller
+                  name="category"
+                  control={control}
+                  render={({ field }) => (
+                    <SelectRoot
+                      name={field.name}
+                      value={field.value}
+                      onValueChange={({ value }) => field.onChange(value)}
+                      onInteractOutside={() => field.onBlur()}
+                      collection={category}
+                      rounded={'md'}
+                      backgroundColor={'blackAlpha.700'}
+                      _focus={{ backgroundColor: 'blackAlpha.900' }}
+                      transition={'all .3s ease'}
+                      size="md"
+                    >
+                      <SelectTrigger>
+                        <SelectValueText placeholder="Select Duration" />
+                      </SelectTrigger>
+                      <SelectContent
+                        position={'absolute'}
+                        width={'full'}
+                        top={16}
+                      >
+                        {category.items.map((d) => (
+                          <SelectItem
+                            key={d.value}
+                            item={d}
+                            onSelect={() => field.onChange(d.value)}
+                          >
+                            {d.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </SelectRoot>
+                  )}
+                />
+              </Field>
+
               {isPending ? (
                 <Spinner size={'md'} borderWidth="3px" m={2} />
               ) : (
@@ -234,6 +282,19 @@ const frameworks = createListCollection({
     { label: 'Ten Minute', value: 'ten minute' },
     { label: 'One Day', value: 'one day' },
     { label: 'One Week', value: 'one week' },
+  ],
+});
+
+const category = createListCollection({
+  items: [
+    { label: 'Decorative', value: 'decorative' },
+    { label: 'Furniture', value: 'furniture' },
+    { label: 'Electronics', value: 'electronics' },
+    { label: 'Clothing', value: 'clothing' },
+    { label: 'Books', value: 'books' },
+    { label: 'Toys', value: 'toys' },
+    { label: 'Sports', value: 'sports' },
+    { label: 'Automotive', value: 'automotive' },
   ],
 });
 

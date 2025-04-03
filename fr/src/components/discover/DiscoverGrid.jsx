@@ -41,21 +41,23 @@ function DiscoverGrid({ queryParam }) {
             <DiscoverCard
               key={item.id}
               price={item.price}
-              badgeList={item.badgeList}
+              category={item.category}
               loading={false}
               expire={item.expire}
+              likes={item.likes}
               isFollowed={item.isFollowed}
               id={item.id}
-              image={item.image}
+              image={item.pic}
               isLiked={item.isLiked}
-              title={item.title}
+              isHot={item.hotness}
+              title={item.name}
               userImage={item.userImage}
               userName={item.userName}
             />
           ))}
         </Grid>
       ) : (
-        <Box py={10} textAlign={'center'} width={'full'}>
+        <Box textAlign={'center'} width={'full'}>
           <Heading>No Item found</Heading>
           <Text>Change item filters to find items</Text>
         </Box>

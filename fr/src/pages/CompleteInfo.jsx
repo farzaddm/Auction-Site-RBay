@@ -36,7 +36,7 @@ const formSchema = z.object({
       message: 'Invalid date format.',
     }),
   job: z.string().optional(),
-  education: z.array(z.string()).optional(),
+  education: z.string().min(0),
   location: z.string().optional(),
 });
 
@@ -64,17 +64,18 @@ function CompleteInfo() {
   useEffect(() => {
     if (data && isSuccess) {
       Object.keys(data).forEach((key) => {
-        setValue(key, data[key]);
+        // Ensure education is properly initialized
+        const value = key === 'education' ? data[key] || null : data[key];
+        setValue(key, value || "");
       });
     }
-  }, [data, isSuccess]);
+  }, [data, isSuccess, setValue]);
 
   const onSubmit = (formData) => {
     try {
       if (formData?.pic) z.string().url().parse(formData.pic);
     } catch (err) {
-      console.log(err);
-      setError('pic', 'link must be valid');
+      setError('pic', { message: 'Link must be valid' });
       return;
     }
 
@@ -85,7 +86,6 @@ function CompleteInfo() {
       return acc;
     }, {});
 
-    if (cleanedData.education) cleanedData.education = cleanedData.education[0];
     mutate(cleanedData);
   };
 
@@ -167,9 +167,8 @@ function CompleteInfo() {
                           showPassword ? 'rotate(180deg)' : 'rotate(0deg)'
                         }
                         cursor="pointer"
-                      >
-                        {showPassword ? <FaRegEyeSlash /> : <FaRegEye />}
-                      </Icon>
+                        as={showPassword ? FaRegEyeSlash : FaRegEye}
+                      />
                     }
                   >
                     <Input
@@ -199,7 +198,6 @@ function CompleteInfo() {
                   />
                 </Field>
 
-                {/*  birthDate  */}
                 <Field
                   mb={!errors.birthDate ? '1.3rem' : 0}
                   label="Birth Date"
@@ -231,7 +229,6 @@ function CompleteInfo() {
                   />
                 </Field>
 
-                {/* education */}
                 <Field
                   mb={!errors.education ? '1.3rem' : 0}
                   label="Education"
@@ -244,8 +241,10 @@ function CompleteInfo() {
                     render={({ field }) => (
                       <SelectRoot
                         name={field.name}
-                        value={field.value}
-                        onValueChange={({ value }) => field.onChange(value)}
+                        value={field.value ? [field.value] : []}
+                        onValueChange={({ value }) =>
+                          field.onChange(value[0] || null)
+                        }
                         onInteractOutside={() => field.onBlur()}
                         collection={frameworks}
                         rounded={'md'}
@@ -255,7 +254,7 @@ function CompleteInfo() {
                         size="md"
                       >
                         <SelectTrigger>
-                          <SelectValueText placeholder="Select Duration" />
+                          <SelectValueText placeholder="Select Education" />
                         </SelectTrigger>
                         <SelectContent
                           position={'absolute'}
@@ -292,7 +291,9 @@ function CompleteInfo() {
                   />
                 </Field>
 
-                <Button type="submit">Submit</Button>
+                <Button type="submit" mt={4}>
+                  Submit
+                </Button>
               </Flex>
             </form>
           )}

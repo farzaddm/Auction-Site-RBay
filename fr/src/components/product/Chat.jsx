@@ -46,12 +46,12 @@ function Chat({ itemId }) {
           <Heading mt={5} color={'red'}>{error.message}</Heading>
         ) : (
           <>
-            <Box>
+            <Box height={400} my={3} overflowY="auto">
               {data ? (
                 data.map((item) => (
                   <ChatItem
                     key={item.id}
-                    user={item.User}
+                    user={item.user}
                     message={item.message}
                   />
                 ))

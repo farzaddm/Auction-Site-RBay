@@ -16,13 +16,14 @@ import {
 } from '../components/ui/action-bar';
 import { Checkbox } from '../components/ui/checkbox';
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { FaRegTrashAlt } from 'react-icons/fa';
 import { useDashboardData, useDeleteItem } from '../http/useHttp';
 import { Toaster, toaster } from '../components/ui/toaster';
 
 function UserDashboard() {
   const userId = localStorage.getItem('userId');
+  const navigate = useNavigate();
   const [selection, setSelection] = useState([]);
   const {
     mutate,
@@ -36,8 +37,13 @@ function UserDashboard() {
   const indeterminate = selection.length > 0 && selection.length < data.length;
 
   useEffect(() => {
-    if (isDeleteError) toaster.error({ title: deleteError });
-    if (isSuccess) toaster.success({ title: deleteItemData.message });
+    if (isDeleteError) {
+      toaster.error({ title: deleteError.response.data.error });
+      if (deleteError.response.status === 401) navigate('/login');
+    }
+    if (isSuccess) {
+      toaster.success({ title: deleteItemData.message });
+    }
   }, [isDeleteError, deleteItemData, isSuccess, deleteError]);
 
   const rows = data?.map((item) => (
@@ -102,7 +108,7 @@ function UserDashboard() {
           {isLoading ? (
             <Spinner color={'teal'} size={'xl'} borderWidth={'4px'} />
           ) : isError ? (
-            <Text color={'red'}>{error.message}</Text>
+            <Text color={'red'}>{error.response.data.message}</Text>
           ) : (
             <>
               <Table.Root

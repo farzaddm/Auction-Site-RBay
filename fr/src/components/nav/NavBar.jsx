@@ -12,7 +12,7 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import { LuSearch } from 'react-icons/lu';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useEffect, useRef, useState } from 'react';
 import SideDrawer from './SideDrawer';
 import AvatarWithTooltip from './AvatarWithTooltip';
@@ -24,6 +24,8 @@ function NavBar() {
   const [isDrawerOpen, setDrawerOpen] = useState(false);
   const [isPopoverOpen, setPopoverOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [isLogged, setIsLogged] = useState(false);
+  const navigate = useNavigate();
   const { data, isError, error, isLoading, refetch } =
     useSearchItem(searchQuery);
 
@@ -32,6 +34,12 @@ function NavBar() {
       toaster.error({ title: error.message });
     }
   }, [isError]);
+
+  useEffect(() => {
+    if (localStorage.getItem('token')) {
+      setIsLogged(true);
+    }
+  }, []);
 
   const handleChange = (e) => {
     if (e.key == 'Enter') {
@@ -132,7 +140,11 @@ function NavBar() {
             </Box>
           </Box>
 
-          <AvatarWithTooltip name="New User" />
+          {isLogged ? (
+            <AvatarWithTooltip name={localStorage.getItem("userName")} />
+          ) : (
+            <Button variant={"ghost"} colorPalette={"green"} onClick={() => navigate('/login')}>Log In</Button>
+          )}
         </Flex>
       </Box>
 

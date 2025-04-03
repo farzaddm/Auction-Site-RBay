@@ -3,9 +3,17 @@ import { FaHeart } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import dateFormatter from '../../query_client/dateReformater';
 
-function CarouselItem({ image, expireDate, title, price, likeCount, isLiked, link }) {
+function CarouselItem({
+  image,
+  expireDate,
+  title,
+  price,
+  likeCount,
+  isLiked,
+  link,
+}) {
   const navigate = useNavigate();
-  const formattedDate = dateFormatter(expireDate)
+  const formattedDate = dateFormatter(expireDate);
 
   return (
     <Card.Root
@@ -25,7 +33,7 @@ function CarouselItem({ image, expireDate, title, price, likeCount, isLiked, lin
       <Card.Body gap="2">
         <Card.Title>{title}</Card.Title>
         <Card.Description>{formattedDate}</Card.Description>
-        <Card.Description>${ price.toFixed(2) }</Card.Description>
+        <Card.Description>${parseFloat(price).toFixed(2)}</Card.Description>
       </Card.Body>
       <Card.Footer gap="2">
         <Button

@@ -3,26 +3,26 @@ import {
   Box,
   Button,
   Flex,
-  Skeleton,
   Text,
   HStack,
   Image,
   Input,
+  VStack,
 } from '@chakra-ui/react';
 import { FaRegHeart, FaHeart } from 'react-icons/fa';
 import { Avatar } from '../components/ui/avatar';
-import { Blockquote } from '../components/ui/blockquote';
 import Chart from '../components/product/Chart';
 import { useBidOnItem, useGetItembyId, useLikeItem } from '../http/useHttp';
 import { toaster } from '../components/ui/toaster';
-import { useEffect, useRef, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useEffect, useRef } from 'react';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import Chat from '../components/product/Chat';
 import dateFormatter from '../query_client/dateReformater';
 
 function ProductDetail() {
   const { id } = useParams();
-  const { data, isLoading, isError, error } = useGetItembyId(id);
+  const navigate = useNavigate();
+  const { data, isError, error } = useGetItembyId(id);
   const {
     mutate,
     isError: isLikeError,
@@ -42,7 +42,8 @@ function ProductDetail() {
 
   useEffect(() => {
     if (isError && error) {
-      toaster.create({ title: error.message, type: 'error' });
+      toaster.create({ title: error.response.data.message, type: 'error' });
+      error.status == 404 && navigate('/');
     }
     if (isLikeError) {
       toaster.create({ title: 'Error liking the item', type: 'error' });
@@ -51,10 +52,12 @@ function ProductDetail() {
       toaster.success({ title: likeData.message });
     }
     if (isBidError) {
-      toaster.error({ title: bidError.message || 'Error placing bid' });
+      toaster.error({
+        title: bidError.response.data.message || 'Error placing bid',
+      });
     }
     if (isBidSuccess) {
-      toaster.success({ title: bidData });
+      toaster.success({ title: bidData.message });
     }
   }, [
     isError,
@@ -66,28 +69,6 @@ function ProductDetail() {
     isBidSuccess,
     isBidError,
   ]);
-
-  useEffect(() => {
-    if (data?.item?.expiredTime) {
-      setRemainingTime(getRemainingTime(data.item.expiredTime));
-    }
-  }, [data]);
-
-  function getRemainingTime(expiredTime) {
-    const expiryDate = new Date(expiredTime);
-    const now = new Date();
-    const diff = expiryDate - now;
-
-    if (diff <= 0) return 'Expired';
-
-    const minutes = Math.floor(diff / (1000 * 60));
-    const hours = Math.floor(minutes / 60);
-    const days = Math.floor(hours / 24);
-
-    if (days > 0) return `${days} day${days > 1 ? 's' : ''} left`;
-    if (hours > 0) return `${hours} hour${hours > 1 ? 's' : ''} left`;
-    return `${minutes} minute${minutes > 1 ? 's' : ''} left`;
-  }
 
   function handleLikeClick() {
     const userId = localStorage.getItem('userId');
@@ -104,6 +85,10 @@ function ProductDetail() {
       toaster.create({ title: 'Please enter a bid amount', type: 'warning' });
       return;
     }
+    if (price > 1000) {
+      toaster.create({ title: 'Bid amount exceeds limit', type: 'warning' });
+      return;
+    }
     bidMutate({ price, itemId: id });
     ref.current.value = '';
   }
@@ -112,99 +97,119 @@ function ProductDetail() {
     <Box width="90%" marginX="auto" minH="80vh" paddingTop="6rem">
       <Flex
         width="100%"
-        flexDirection={{ xl: 'row', md: 'column' }}
-        padding={10}
+        flexDirection={{ base: 'column', lg: 'row' }}
+        padding={{ base: 4, md: 10 }}
         gap={5}
         backgroundColor="whiteAlpha.200"
         borderTopRadius={10}
         shadow="md"
       >
-        <Box flex={1} borderRadius={10}>
-          <Skeleton isLoaded={!isLoading && !isError}>
-            {data?.item?.pic && (
-              <Image
-                borderRadius={10}
-                objectFit="cover"
-                width="full"
-                height="full"
-                src={data.item.pic}
-                alt={data.item.name}
-              />
-            )}
-          </Skeleton>
+        <Box flex={1} borderRadius={10} minH={{ base: '100%', md: '100%' }}>
+          {data?.item?.pic && (
+            <Image
+              borderRadius={10}
+              objectFit="cover"
+              width="full"
+              height="full"
+              src={data.item.pic}
+              alt={data.item.name}
+            />
+          )}
         </Box>
 
         <Box
           backgroundColor="teal.900/70"
           shadow="md"
           borderRadius={10}
-          padding={10}
+          padding={{ base: 4, md: 10 }}
           flex={3}
           width="full"
         >
           <Flex justifyContent="space-between" alignItems="center">
-            <Skeleton isLoaded={!isLoading && !isError}>
-              <Text textStyle="2xl">{data?.item?.name || 'Product Name'}</Text>
-            </Skeleton>
+            <Text fontSize={{ base: 'xl', md: '2xl' }} fontWeight="bold">
+              {data?.item?.name || 'Product Name'}
+            </Text>
 
             {isPending ? (
               <Text>Pending...</Text>
             ) : (
               <Button variant="outline" onClick={handleLikeClick}>
-                {data?.liked ? <FaHeart /> : <FaRegHeart />}
+                {data?.liked ? <FaHeart color="red" /> : <FaRegHeart />}
                 <Text ml={2}>{data?.item?.likes || 0}</Text>
               </Button>
             )}
           </Flex>
 
-          <Skeleton isLoaded={!isLoading && !isError}>
-            <Blockquote
-              bg="bg.subtle"
-              padding="4"
-              cite={
-                <HStack mt="2" gap="3">
-                  {data?.User && (
-                    <>
-                      <Avatar
-                        size="sm"
-                        name={data.User.username}
-                        src={data.User.pic}
-                      />
-                      <Text fontWeight="medium">{data.User.username}</Text>
-                    </>
-                  )}
-                </HStack>
-              }
-            >
-              {data?.item?.description || 'No description available'}
-            </Blockquote>
-          </Skeleton>
+          <Box
+            bg="whiteAlpha.300"
+            p={{ base: 3, md: 4 }}
+            borderRadius="lg"
+            mt={4}
+            sx={{
+              wordBreak: 'break-word',
+              overflowWrap: 'break-word',
+            }}
+          >
+            <HStack mb={3} spacing={3} align="center">
+              <Avatar
+                size="sm"
+                name={data?.item.user.username}
+                // src={data?.user?.pic}
+              />
+              <Text
+                cursor={'pointer'}
+                onClick={() => navigate(`/user/${data?.item.user.id}`)}
+                fontWeight="medium"
+              >
+                {data?.item.user.username}
+              </Text>
+            </HStack>
 
-          <HStack mt="4">
-            {data?.item?.hotness && <Badge colorPalette="red">Hot</Badge>}
-            {data?.item?.category?.map((item, index) => (
-              <Badge key={index}>{item}</Badge>
-            ))}
+            <Text fontSize="md" mb={3}>
+              {data?.item?.description || 'No description available'}
+            </Text>
+          </Box>
+
+          <HStack mt={4} flexWrap="wrap">
+            {data?.item?.hotness && (
+              <Badge colorScheme="red" variant="solid">
+                Hot
+              </Badge>
+            )}
+            <Badge colorScheme="teal">{data?.item.category}</Badge>
           </HStack>
 
-          <Flex justifyContent="space-between" mt={5}>
+          <Flex
+            justifyContent="space-between"
+            mt={5}
+            flexDirection={{ base: 'column', sm: 'row' }}
+            gap={{ base: 2, sm: 0 }}
+          >
             <Text>High Bid: {data?.item?.price}$</Text>
             <Text>Bids: {data?.bids?.length || 0}</Text>
             <Text>Ending: {dateFormatter(data?.expire)}</Text>
           </Flex>
 
-          <Flex mt={6} gap={2}>
+          <Flex
+            mt={6}
+            gap={2}
+            flexDirection={{ base: 'column', sm: 'row' }}
+            alignItems="center"
+          >
             <Input
-              variant="subtle"
+              variant="filled"
               borderColor="whiteAlpha.700"
               type="number"
               placeholder="Place a bid"
               ref={ref}
+              flex={1}
             />
             {isBidPending ? (
-              <Text>Pending...</Text>
+              <Button isLoading loadingText="Submitting" />
             ) : (
-              <Button onClick={handlePlaceBidClick}>Submit</Button>
+              <Button onClick={handlePlaceBidClick} colorScheme="teal" px={6}>
+                Submit
+              </Button>
             )}
           </Flex>
         </Box>
@@ -214,7 +219,7 @@ function ProductDetail() {
         shadow="md"
         width="full"
         backgroundColor="blackAlpha.700"
-        p={10}
+        p={{ base: 4, md: 10 }}
         borderBottomRadius={10}
         display="flex"
         flexDirection={{ base: 'column', lg: 'row' }}
@@ -222,10 +227,9 @@ function ProductDetail() {
         alignItems="center"
         gap={5}
       >
-        <Chart />
-        <Chat chatList={data?.chats} />
+        <Chart bids={data?.bids} />
+        <Chat itemId={id} />
       </Box>
-      {/* <Toaster /> */}
     </Box>
   );
 }

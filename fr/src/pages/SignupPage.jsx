@@ -66,12 +66,14 @@ function SignupPage() {
 
   useEffect(() => {
     if (isError) {
+      console.log(error)
       toaster.error({
-        description: error.message,
+        description: error?.response.data.error,
       });
     }
     if (isSuccess) {
-      toaster.success({title:"Signed up successfully. redirecting..."})
+      toaster.success({ title: "Signed up successfully. redirecting..." })
+      console.log(data);
       localStorage.setItem("token", data.token)
       navigate("/")
     }
@@ -96,11 +98,11 @@ function SignupPage() {
         flexDir="column"
         mb="2"
         justifyContent="center"
-        p={5}
+        p={{base:2, md:5}}
         rounded={'md'}
         backgroundColor={'gray.400/50'}
         alignItems="center"
-        w={'45%'}
+        w={{base: '80%', md:'45%'}}
       >
         <Heading size={'4xl'} color="teal.400">
           Join Us!
@@ -109,7 +111,7 @@ function SignupPage() {
           <Stack
             spacing={4}
             p={8}
-            px={16}
+            px={{base:5, md:10, lg:16}}
             rounded={'lg'}
             shadow={'md'}
             backgroundColor="teal.800/80"

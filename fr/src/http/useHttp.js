@@ -1,7 +1,6 @@
 import axios from 'axios';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import getQueryClient from '../query_client/query_client';
-import { redirect } from 'react-router-dom';
 
 const sendHttp = async ({
   endpoint,
@@ -27,7 +26,7 @@ export const useLogin = () =>
   useMutation({
     mutationFn: (body) => {
       return sendHttp({
-        endpoint: '/api/login',
+        endpoint: '/api/auth/login',
         method: 'POST',
         body,
       });
@@ -38,7 +37,7 @@ export const useSignup = () =>
   useMutation({
     mutationFn: (body) =>
       sendHttp({
-        endpoint: `/api/signup`,
+        endpoint: '/api/auth/signup',
         body: body,
         method: 'POST',
       }),
@@ -47,34 +46,17 @@ export const useSignup = () =>
 export const useGetItem = (query) => {
   return useQuery({
     queryKey: ['item'],
-    queryFn: async () => {
-      console.log(query);
-      // return await sendHttp({
-      //   endpoint: `/api/items?${query}`,
-      //   method: 'GET',
-      // });
-      return [
-        {
-          id: '1',
-          price: 19,
-          badgeList: ['mozakhraf'],
-          expire: '2 days',
-          isFollowed: false,
-          image: 'https://thispersondoesnotexist.com/',
-          isLiked: true,
-          title: 'ashghal',
-          userImage: 'https://thispersondoesnotexist.com/',
-          userName: 'haghir',
-        },
-      ];
-    },
+    queryFn: async () =>
+      await sendHttp({
+        endpoint: `/api/items?${query}`,
+        method: 'GET',
+      }),
   });
 };
 
 export const useAddItem = () =>
   useMutation({
     mutationFn: (body) => {
-      console.log(body);
       return sendHttp({
         endpoint: '/api/items/',
         method: 'POST',
@@ -186,7 +168,7 @@ export const useGetUser = (id) =>
     queryKey: ['user', id],
     queryFn: () =>
       sendHttp({
-        endpoint: `/api/user/${id}`,
+        endpoint: `/api/users/${id}`,
         method: 'GET',
       }),
   });
@@ -195,9 +177,9 @@ export const usePostUserInfo = (id) =>
   useMutation({
     mutationFn: (body) =>
       sendHttp({
-        endpoint: `/api/user/?id=${id}`,
+        endpoint: `/api/users/?id=${id}`,
         method: 'POST',
-        body
+        body,
       }),
     onSuccess: () => {
       const queryClient = getQueryClient();

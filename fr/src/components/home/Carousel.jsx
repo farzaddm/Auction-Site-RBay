@@ -6,7 +6,9 @@ import { useGetItem } from '../../http/useHttp';
 
 export default function Carousel() {
   const scrollContainerRef = useRef(null);
-  const { data, isLoading, isError, error } = useGetItem('sort=newest');
+  const { data, isLoading, isError, error } = useGetItem(
+    'sort=newest&price=1,1000'
+  );
 
   const scroll = (direction) => {
     if (scrollContainerRef.current) {
@@ -50,19 +52,23 @@ export default function Carousel() {
         }}
         mx="auto"
         overflow="hidden"
+        backgroundColor={"whiteAlpha.200"}
         py={6}
+        px={9}
+        rounded={"lg"}
+        shadow={"sm"}
       >
         {isLoading ? (
           <Spinner size={'xl'} color={'teal'} borderWidth={'3px'} />
         ) : isError ? (
           <Text>{error.message}</Text>
-        ) : (
+        ) : data.length > 0 ? (
           <>
             <Icon
               position="absolute"
               cursor="pointer"
               top="45%"
-              left="10px"
+              left="0px"
               transform="translateY(-50%)"
               zIndex={2}
               icon={<IoIosArrowBack />}
@@ -79,7 +85,7 @@ export default function Carousel() {
               cursor="pointer"
               position="absolute"
               top="45%"
-              right="10px"
+              right="0px"
               transform="translateY(-50%)"
               zIndex={2}
               icon={<IoIosArrowBack />}
@@ -108,7 +114,7 @@ export default function Carousel() {
                   link={`/product/${product.id}`}
                   key={product.id}
                   expireDate={product.expire}
-                  image={product.image}
+                  image={product.pic}
                   isLiked={product.isLiked}
                   likeCount={1000}
                   title={product.title}
@@ -116,6 +122,8 @@ export default function Carousel() {
               ))}
             </Box>
           </>
+        ) : (
+          <Text>No Item Found</Text>
         )}
       </Box>
     </>
