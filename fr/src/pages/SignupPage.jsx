@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   Flex,
   Heading,
@@ -10,6 +10,7 @@ import {
   Icon,
   Text,
   Alert,
+  Spinner,
 } from '@chakra-ui/react';
 import {
   FaRegEyeSlash,
@@ -18,12 +19,14 @@ import {
   FaLock,
   FaEnvelope,
 } from 'react-icons/fa';
+import { toaster, Toaster } from '../components/ui/toaster';
 import { InputGroup } from '../components/ui/input-group';
 import { Field } from '../components/ui/field';
 import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useSignup } from '../http/useHttp';
 
 const signupSchema = z
   .object({
@@ -44,11 +47,11 @@ const signupSchema = z
 function SignupPage() {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
+  const { mutate, error, isError, isPending, data, isSuccess } = useSignup();
 
   const {
     register,
     handleSubmit,
-    setError,
     formState: { isSubmitting, errors },
   } = useForm({
     resolver: zodResolver(signupSchema),
@@ -57,9 +60,24 @@ function SignupPage() {
   const handleShowClick = () => setShowPassword((prev) => !prev);
 
   const onSubmit = (data) => {
-    // return console.log(data)
-    return setError('root', { message: 'test error' });
+    console.log(data);
+    mutate(data);
   };
+
+  useEffect(() => {
+    if (isError) {
+      console.log(error)
+      toaster.error({
+        description: error?.response.data.error,
+      });
+    }
+    if (isSuccess) {
+      toaster.success({ title: "Signed up successfully. redirecting..." })
+      console.log(data);
+      localStorage.setItem("token", data.token)
+      navigate("/")
+    }
+  }, [isError, isSuccess]);
 
   return (
     <Flex
@@ -80,11 +98,11 @@ function SignupPage() {
         flexDir="column"
         mb="2"
         justifyContent="center"
-        p={5}
+        p={{base:2, md:5}}
         rounded={'md'}
         backgroundColor={'gray.400/50'}
         alignItems="center"
-        w={'45%'}
+        w={{base: '80%', md:'45%'}}
       >
         <Heading size={'4xl'} color="teal.400">
           Join Us!
@@ -93,7 +111,7 @@ function SignupPage() {
           <Stack
             spacing={4}
             p={8}
-            px={16}
+            px={{base:5, md:10, lg:16}}
             rounded={'lg'}
             shadow={'md'}
             backgroundColor="teal.800/80"
@@ -178,17 +196,23 @@ function SignupPage() {
                 />
               </InputGroup>
             </Field>
-            <Button
-              rounded={'md'}
-              type="submit"
-              variant="solid"
-              width="full"
-              isLoading={isSubmitting}
-            >
-              Sign Up
-            </Button>
+            {isPending ? (
+              <Box w={'full'} textAlign={'center'}>
+                <Spinner size={'lg'} />
+              </Box>
+            ) : (
+              <Button
+                rounded={'md'}
+                type="submit"
+                variant="solid"
+                width="full"
+                isLoading={isSubmitting}
+              >
+                Sign Up
+              </Button>
+            )}
             {errors.root && (
-              <Alert.Root status="error" textAlign={"start"}>
+              <Alert.Root status="error" textAlign={'start'}>
                 <Alert.Indicator />
                 <Alert.Content>
                   <Alert.Description>{errors.root?.message}</Alert.Description>
@@ -212,6 +236,7 @@ function SignupPage() {
           Login
         </Text>
       </Box>
+      <Toaster />
     </Flex>
   );
 }

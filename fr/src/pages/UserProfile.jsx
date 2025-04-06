@@ -1,8 +1,14 @@
 import { Box, Button, Flex, Heading, Text } from '@chakra-ui/react';
 import { Avatar } from '../components/ui/avatar';
 import UserProducts from '../components/user/UserProducts';
+import { use } from 'react';
+import { useGetUser } from '../http/useHttp';
 
 function UserProfile() {
+  const { id } = useParams();
+  const { data } = useGetUser(id);
+  console.log(data);
+
   return (
     <Box width={'80%'} minH={'100vh'} mx={'auto'} paddingTop={100}>
       <Box

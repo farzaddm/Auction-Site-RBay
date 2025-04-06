@@ -1,14 +1,15 @@
-import { Outlet } from 'react-router-dom';
+import { Outlet, useNavigate } from 'react-router-dom';
 import NavBar from '../components/nav/NavBar';
 import Footer from '../components/home/Footer';
 import { Image } from '@chakra-ui/react';
 import TopIcon from '../components/nav/TopIcon';
+import { toaster, Toaster } from '../components/ui/toaster';
 
 function Layout() {
   return (
     <>
       <Image
-        src="background.svg"
+        src="/background.svg"
         width={'full'}
         height={'full'}
         zIndex={-100}
@@ -18,6 +19,7 @@ function Layout() {
       <Outlet />
       <Footer />
       <TopIcon />
+      <Toaster />
     </>
   );
 }

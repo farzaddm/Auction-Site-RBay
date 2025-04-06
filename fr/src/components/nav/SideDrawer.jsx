@@ -26,7 +26,7 @@ function SideDrawer({ open, setOpen }) {
     >
       <DrawerBackdrop />
       <DrawerContent>
-        <DrawerHeader>
+        {/* <DrawerHeader>
           <DrawerTitle textAlign={'start'}>
             <Flex
               justifyContent={'left'}
@@ -53,9 +53,9 @@ function SideDrawer({ open, setOpen }) {
               </Flex>
             </Flex>
           </DrawerTitle>
-        </DrawerHeader>
+        </DrawerHeader> */}
         <DrawerBody>
-          <InputGroup
+          {/* <InputGroup
             my={2}
             mx={'auto'}
             display={{ base: 'block', md: 'none' }}
@@ -63,7 +63,7 @@ function SideDrawer({ open, setOpen }) {
             startElement={<LuSearch />}
           >
             <Input placeholder="Search" variant="subtle" />
-          </InputGroup>
+          </InputGroup> */}
 
           <Box mb={5}>
             <DrawerStack />
@@ -72,11 +72,13 @@ function SideDrawer({ open, setOpen }) {
           <DrawerFollowing />
         </DrawerBody>
         <DrawerFooter>
-          <DrawerActionTrigger>
-            <Button variant="subtle" colorPalette={'red'}>
-              Log Out
-            </Button>
-          </DrawerActionTrigger>
+          {localStorage.getItem('token') && (
+            <DrawerActionTrigger>
+              <Button variant="subtle" colorPalette={'red'}>
+                Log Out
+              </Button>
+            </DrawerActionTrigger>
+          )}
           <DrawerActionTrigger asChild>
             <Button variant="outline" colorPalette="red">
               Close

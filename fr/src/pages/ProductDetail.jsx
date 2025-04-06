@@ -1,291 +1,237 @@
 import {
   Badge,
-  BlockquoteIcon,
   Box,
   Button,
-  Card,
-  defineStyle,
-  Field,
   Flex,
-  Float,
-  Group,
+  Text,
   HStack,
-  Icon,
   Image,
   Input,
-  LinkBox,
-  Skeleton,
-  Span,
-  Text,
+  VStack,
 } from '@chakra-ui/react';
 import { FaRegHeart, FaHeart } from 'react-icons/fa';
-import { Link } from 'react-router-dom';
 import { Avatar } from '../components/ui/avatar';
-import { Blockquote } from '../components/ui/blockquote';
 import Chart from '../components/product/Chart';
-import { useState } from 'react';
+import { useBidOnItem, useGetItembyId, useLikeItem } from '../http/useHttp';
+import { toaster } from '../components/ui/toaster';
+import { useEffect, useRef } from 'react';
+import { Link, useNavigate, useParams } from 'react-router-dom';
+import Chat from '../components/product/Chat';
+import dateFormatter from '../query_client/dateReformater';
 
 function ProductDetail() {
-  const [loading, setLoading] = useState(false);
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const { data, isError, error } = useGetItembyId(id);
+  const {
+    mutate,
+    isError: isLikeError,
+    isPending,
+    isSuccess: isLikeSuccess,
+    data: likeData,
+  } = useLikeItem();
+  const {
+    mutate: bidMutate,
+    data: bidData,
+    isPending: isBidPending,
+    isError: isBidError,
+    error: bidError,
+    isSuccess: isBidSuccess,
+  } = useBidOnItem();
+  const ref = useRef();
+
+  useEffect(() => {
+    if (isError && error) {
+      toaster.create({ title: error.response.data.message, type: 'error' });
+      error.status == 404 && navigate('/');
+    }
+    if (isLikeError) {
+      toaster.create({ title: 'Error liking the item', type: 'error' });
+    }
+    if (isLikeSuccess && likeData) {
+      toaster.success({ title: likeData.message });
+    }
+    if (isBidError) {
+      toaster.error({
+        title: bidError.response.data.message || 'Error placing bid',
+      });
+    }
+    if (isBidSuccess) {
+      toaster.success({ title: bidData.message });
+    }
+  }, [
+    isError,
+    error,
+    isLikeError,
+    isLikeSuccess,
+    likeData,
+    bidData,
+    isBidSuccess,
+    isBidError,
+  ]);
+
+  function handleLikeClick() {
+    const userId = localStorage.getItem('userId');
+    if (!userId) {
+      toaster.create({ title: 'Please log in to like items', type: 'warning' });
+      return;
+    }
+    mutate({ itemId: id, userId });
+  }
+
+  function handlePlaceBidClick() {
+    const price = ref.current.value;
+    if (!price) {
+      toaster.create({ title: 'Please enter a bid amount', type: 'warning' });
+      return;
+    }
+    if (price > 1000) {
+      toaster.create({ title: 'Bid amount exceeds limit', type: 'warning' });
+      return;
+    }
+    bidMutate({ price, itemId: id });
+    ref.current.value = '';
+  }
 
   return (
-    <Box width="90%" marginX={'auto'} minH={'80vh'} paddingTop={'6rem'}>
+    <Box width="90%" marginX="auto" minH="80vh" paddingTop="6rem">
       <Flex
-        width={'100%'}
-        height={'full'}
-        marginX={'auto'}
-        flexDirection={{
-          xlDown: 'row',
-          xl: 'row',
-          md: 'column',
-          mdDown: 'column',
-        }}
-        padding={10}
+        width="100%"
+        flexDirection={{ base: 'column', lg: 'row' }}
+        padding={{ base: 4, md: 10 }}
         gap={5}
-        backgroundColor={'whiteAlpha.200'}
+        backgroundColor="whiteAlpha.200"
         borderTopRadius={10}
         shadow="md"
       >
-        <Box flex={1} borderRadius={10}>
-          <Skeleton height={'full'} loading={loading}>
+        <Box flex={1} borderRadius={10} minH={{ base: '100%', md: '100%' }}>
+          {data?.item?.pic && (
             <Image
               borderRadius={10}
               objectFit="cover"
               width="full"
               height="full"
-              src="/test.jpg"
-              alt="Caffe Latte"
+              src={data.item.pic}
+              alt={data.item.name}
             />
-          </Skeleton>
+          )}
         </Box>
+
         <Box
-          backgroundColor={'teal.900/70'}
+          backgroundColor="teal.900/70"
           shadow="md"
           borderRadius={10}
-          padding={{ xl: 10, xlDown: 10, sm: 5, smDown: 5 }}
+          padding={{ base: 4, md: 10 }}
           flex={3}
-          width={'full'}
+          width="full"
         >
-          <Flex
-            marginBottom={3}
-            alignItems="center"
-            flexDirection={{
-              xl: 'row',
-              xlDown: 'row',
-              sm: 'column',
-              smDown: 'column',
+          <Flex justifyContent="space-between" alignItems="center">
+            <Text fontSize={{ base: 'xl', md: '2xl' }} fontWeight="bold">
+              {data?.item?.name || 'Product Name'}
+            </Text>
+
+            {isPending ? (
+              <Text>Pending...</Text>
+            ) : (
+              <Button variant="outline" onClick={handleLikeClick}>
+                {data?.liked ? <FaHeart color="red" /> : <FaRegHeart />}
+                <Text ml={2}>{data?.item?.likes || 0}</Text>
+              </Button>
+            )}
+          </Flex>
+
+          <Box
+            bg="whiteAlpha.300"
+            p={{ base: 3, md: 4 }}
+            borderRadius="lg"
+            mt={4}
+            sx={{
+              wordBreak: 'break-word',
+              overflowWrap: 'break-word',
             }}
-            margin={0}
-            justifyContent={'space-between'}
           >
-            <Skeleton height="7" loading={loading}>
-              <Text textStyle={{ base: '2xl', mdDown: 'xl' }}>
-                Incredible Soft Bike
-              </Text>
-            </Skeleton>
-
-            <Button maxW={'rem'} variant="outline" padding={0}>
-              <Group attached width={'full'}>
-                <Button color={'whiteAlpha.600'} variant="outline">
-                  {/* <Icon h={6}><FaHeart /></Icon> */}
-                  <Icon h={5}>
-                    <FaRegHeart />
-                  </Icon>
-                  <Text h={5}>Like</Text>
-                </Button>
-                <Skeleton loading={loading}>
-                  <Text w={10}>100k</Text>
-                </Skeleton>
-              </Group>
-            </Button>
-          </Flex>
-          <Text marginY={3} textAlign={'left'} textStyle={{ mdDown: 'xs' }}>
-            <Skeleton height="30" loading={loading}>
-              <Blockquote
-                bg="bg.subtle"
-                padding="4"
-                cite={
-                  <HStack mt="2" gap="3">
-                    <Avatar
-                      size="sm"
-                      name="Emily Jones"
-                      src="https://i.pravatar.cc/150?u=re"
-                    />
-                    <Span fontWeight="medium">Emily Jones</Span>
-                  </HStack>
-                }
-              >
-                A wood chair is a type of chair that is made from wood. Wood
-                chairs can be either indoor or outdoor chairs, and they come in
-                a variety of different styles. Indoor wood chairs are typically
-                more ornate than outdoor wood chairs, and they may have features
-                such as carvings or upholstered seats. Outdoor wood chairs are
-                typically more simple in design, and they often have slatted
-                seats that allow water to drain off them easily.
-              </Blockquote>
-            </Skeleton>
-          </Text>
-
-          <Text
-            textAlign={'left'}
-            color={'whiteAlpha.400'}
-            my={2}
-            textStyle={{ mdDown: 'sm' }}
-            _hover={{ textDecoration: 'underline' }}
-          >
-            <Link>See the seller</Link>
-          </Text>
-
-          <Flex
-            flexDirection={{ base: 'row', mdDown: 'column' }}
-            alignItems="left"
-            gapY=".5rem"
-            justifyContent="space-between"
-            marginY={5}
-          >
-            <Group attached>
+            <HStack mb={3} spacing={3} align="center">
+              <Avatar
+                size="sm"
+                name={data?.item.user.username}
+                // src={data?.user?.pic}
+              />
               <Text
-                borderColor={'whiteAlpha.100'}
-                color={'whiteAlpha.600'}
-                borderWidth="2px"
-                borderTopLeftRadius={5}
-                borderBottomLeftRadius={5}
-                padding={3}
+                cursor={'pointer'}
+                onClick={() => navigate(`/user/${data?.item.user.id}`)}
+                fontWeight="medium"
               >
-                High Bid
+                {data?.item.user.username}
               </Text>
-              <Skeleton loading={loading}>
-                <Text
-                  borderColor={'whiteAlpha.100'}
-                  borderWidth="2px"
-                  borderTopRightRadius={5}
-                  borderBottomRightRadius={5}
-                  padding={3}
-                >
-                  16.50$
-                </Text>
-              </Skeleton>
-            </Group>
-            <Group attached>
-              <Text
-                borderColor={'whiteAlpha.100'}
-                color={'whiteAlpha.600'}
-                borderWidth="2px"
-                borderTopLeftRadius={5}
-                borderBottomLeftRadius={5}
-                padding={3}
-              >
-                Bids
-              </Text>
-              <Skeleton loading={loading}>
-                <Text
-                  borderColor={'whiteAlpha.100'}
-                  borderWidth="2px"
-                  borderTopRightRadius={5}
-                  borderBottomRightRadius={5}
-                  padding={3}
-                >
-                  6
-                </Text>
-              </Skeleton>
-            </Group>
-            <Group attached>
-              <Text
-                borderColor={'whiteAlpha.100'}
-                color={'whiteAlpha.600'}
-                borderWidth="2px"
-                borderTopLeftRadius={5}
-                borderBottomLeftRadius={5}
-                padding={3}
-              >
-                Ending
-              </Text>
-              <Skeleton loading={loading}>
-                <Text
-                  borderColor={'whiteAlpha.100'}
-                  borderWidth="2px"
-                  borderTopRightRadius={5}
-                  borderBottomRightRadius={5}
-                  padding={3}
-                >
-                  10 days ago
-                </Text>
-              </Skeleton>
-            </Group>
-          </Flex>
+            </HStack>
 
-          <HStack mt="4">
-            <Badge>Hot</Badge>
-            <Badge>Caffeine</Badge>
+            <Text fontSize="md" mb={3}>
+              {data?.item?.description || 'No description available'}
+            </Text>
+          </Box>
+
+          <HStack mt={4} flexWrap="wrap">
+            {data?.item?.hotness && (
+              <Badge colorScheme="red" variant="solid">
+                Hot
+              </Badge>
+            )}
+            <Badge colorScheme="teal">{data?.item.category}</Badge>
           </HStack>
 
           <Flex
-            backgroundColor={"blackAlpha.700/80"}
-            rounded={"md"}
-            p={4}
-            marginTop={6}
-            direction={{
-              base: 'row',
-              xl: 'row',
-              mdToXl: 'row',
-              md: 'column',
-              mdDown: 'column',
-            }}
-            gap={2}
-            width={{base: "90%", lg:"50%"}}
-            justifyContent={'left'}
-            alignItems={'left'}
+            justifyContent="space-between"
+            mt={5}
+            flexDirection={{ base: 'column', sm: 'row' }}
+            gap={{ base: 2, sm: 0 }}
           >
-            <Field.Root>
-              <Box
-                pos="relative"
-                w={{
-                  base: '80%',
-                  xl: '80%',
-                  mdToXl: '80%',
-                  md: '100%',
-                  mdDown: '100%',
-                }}
-              >
-                <Input
-                  className="peer"
-                  variant={"subtle"}
-                  borderColor={'whiteAlpha.700'}
-                  placeholder=""
-                  type="number"
-                />
-                <Field.Label css={floatingStyles}>place a bid</Field.Label>
-              </Box>
-            </Field.Root>
+            <Text>High Bid: {data?.item?.price}$</Text>
+            <Text>Bids: {data?.bids?.length || 0}</Text>
+            <Text>Ending: {dateFormatter(data?.expire)}</Text>
+          </Flex>
 
-            <Button maxW={20}>Submit</Button>
+          <Flex
+            mt={6}
+            gap={2}
+            flexDirection={{ base: 'column', sm: 'row' }}
+            alignItems="center"
+          >
+            <Input
+              variant="filled"
+              borderColor="whiteAlpha.700"
+              type="number"
+              placeholder="Place a bid"
+              ref={ref}
+              flex={1}
+            />
+            {isBidPending ? (
+              <Button isLoading loadingText="Submitting" />
+            ) : (
+              <Button onClick={handlePlaceBidClick} colorScheme="teal" px={6}>
+                Submit
+              </Button>
+            )}
           </Flex>
         </Box>
       </Flex>
 
-      <Chart />
+      <Box
+        shadow="md"
+        width="full"
+        backgroundColor="blackAlpha.700"
+        p={{ base: 4, md: 10 }}
+        borderBottomRadius={10}
+        display="flex"
+        flexDirection={{ base: 'column', lg: 'row' }}
+        justifyContent="center"
+        alignItems="center"
+        gap={5}
+      >
+        <Chart bids={data?.bids} />
+        <Chat itemId={id} />
+      </Box>
     </Box>
   );
 }
 
-const floatingStyles = defineStyle({
-  pos: 'absolute',
-  bg: 'bg',
-  px: '0.5',
-  top: '-3',
-  insetStart: '2',
-  fontWeight: 'normal',
-  pointerEvents: 'none',
-  transition: 'position',
-  _peerPlaceholderShown: {
-    color: 'fg.muted',
-    top: '2.5',
-    insetStart: '3',
-  },
-  _peerFocusVisible: {
-    color: 'fg',
-    top: '-3',
-    insetStart: '2',
-  },
-});
 export default ProductDetail;

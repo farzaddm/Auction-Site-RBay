@@ -7,7 +7,6 @@ import { Slider } from '../ui/slider';
 const sort = createListCollection({
   items: [
     { label: 'Most Liked', value: 'liked' },
-    { label: 'Hot Items', value: 'hot' },
     { label: 'Following', value: 'following' },
     { label: 'Favorite', value: 'favorite' },
     { label: 'Newest', value: 'newest' },
@@ -40,25 +39,44 @@ const category = createListCollection({
   ],
 });
 
-const condition = createListCollection({
+const isHot = createListCollection({
   items: [
-    { label: 'New', value: 'new' },
-    { label: 'Used', value: 'used' },
-    { label: 'Refurbished', value: 'refurbished' },
+    { label: 'yes', value: 'true' },
+    { label: 'no', value: 'false' },
   ],
 });
 
-function DiscoverFilter() {
+function DiscoverFilter({ setQuery }) {
   const {
     handleSubmit,
     formState: { errors },
     control,
   } = useForm({
     resolver: '',
-    defaultValues: { slider: [0, 30] },
+    defaultValues: { slider: [1, 1000] },
   });
 
-  const onSubmit = handleSubmit((data) => console.log(data));
+  const onSubmit = handleSubmit((data) => {
+    console.log(data);
+    const queryParts = [];
+    if (data.sort) {
+      queryParts.push(`sort=${data.sort}`);
+    }
+    if (data.ending) {
+      queryParts.push(`ending=${data.ending}`);
+    }
+    if (data.category) {
+      queryParts.push(`category=${data.category}`);
+    }
+    if (data.hotness) {
+      queryParts.push(`hotness=${data.hotness}`);
+    }
+    if (data.slider && data.slider.length === 2) {
+      queryParts.push(`price=${data.slider[0]},${data.slider[1]}`);
+    }
+    const query = queryParts.join('&');
+    setQuery(query);
+  });
 
   return (
     <Box
@@ -85,8 +103,10 @@ function DiscoverFilter() {
                 <Slider
                   colorPalette="teal"
                   width="full"
-                  marks={[0, 25, 50, 75, 100]}
-                  step={0.1}
+                  min={1}
+                  max={1000}
+                  marks={[1, 250, 500, 750, 1000]} 
+                  step={1}
                   onFocusChange={({ focusedIndex }) => {
                     if (focusedIndex !== -1) return;
                     field.onBlur();
@@ -126,11 +146,11 @@ function DiscoverFilter() {
           />
 
           <DiscoverFilterSelect
-            label={'Condition'}
-            collection={condition}
+            label={'Is hot'}
+            collection={isHot}
             control={control}
-            errorMessage={errors.condition?.message}
-            name={'condition'}
+            errorMessage={errors.isHot?.message}
+            name={'isHot'}
           />
 
           <Button size="sm" type="submit">

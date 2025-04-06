@@ -9,6 +9,7 @@ import NewItem from './pages/NewItem';
 import DiscoverPage from './pages/DiscoverPage';
 import LoginPage from './pages/LoginPage';
 import SignupPage from './pages/SignupPage';
+import CompleteInfo from './pages/CompleteInfo';
 
 const router = createBrowserRouter([
   {
@@ -20,11 +21,21 @@ const router = createBrowserRouter([
       },
       {
         path: 'product',
-        element: <ProductDetail />,
+        children: [
+          {
+            path: ':id',
+            element: <ProductDetail />,
+          },
+        ],
       },
       {
         path: 'user',
-        element: <UserProfile />,
+        children: [
+          {
+            path: ':id',
+            element: <UserProfile />,
+          },
+        ],
       },
       {
         path: 'dashboard',
@@ -38,16 +49,20 @@ const router = createBrowserRouter([
         path: 'discover',
         element: <DiscoverPage />,
       },
+      {
+        path: 'info',
+        element: <CompleteInfo />,
+      },
     ],
   },
   {
-    path: "/login",
-    element: <LoginPage />
+    path: '/login',
+    element: <LoginPage />,
   },
   {
-    path: "/signup",
-    element: <SignupPage />
-  }
+    path: '/signup',
+    element: <SignupPage />,
+  },
 ]);
 
 function App() {

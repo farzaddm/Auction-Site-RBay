@@ -1,4 +1,4 @@
-import { Box, Button } from '@chakra-ui/react';
+import { Box, Text } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import {
   LineChart,
@@ -8,9 +8,11 @@ import {
   YAxis,
   Tooltip,
   Legend,
+  ResponsiveContainer,
 } from 'recharts';
 
-function Chart() {
+function Chart({ bids }) {
+  const [chartData, setChartData] = useState([]);
   const [screenWidth, setScreenWidth] = useState(window.innerWidth);
 
   useEffect(() => {
@@ -20,39 +22,70 @@ function Chart() {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
+  useEffect(() => {
+    if (bids && bids.length > 0) {
+      const reversedBids = [...bids].reverse();
+
+      const formattedData = reversedBids.map((bid, index) => ({
+        name: bid?.user?.username || `Bid ${index + 1}`,
+        price: bid?.price || 0,
+        date: new Date(bid?.createdAt).toLocaleTimeString(),
+      }));
+
+      setChartData(formattedData);
+    }
+  }, [bids]);
+
+  if (!bids || bids.length === 0) {
+    return (
+      <Box width={"full"} textAlign="center" p={8}>
+        <Text>No bidding history available</Text>
+      </Box>
+    );
+  }
+
+  const prices = chartData.map((item) => item.price);
+  const minPrice = Math.min(...prices);
+  const maxPrice = Math.max(...prices);
+
   return (
-    <Box
-      shadow="md"
-      width="full"
-      backgroundColor="blackAlpha.700"
-      p={10}
-      borderBottomRadius={10}
-      display="flex"
-      justifyContent="center"
-      alignItems="center"
-    >
+    <ResponsiveContainer width="100%" height={400}>
       <LineChart
-        width={Math.min(screenWidth * 0.8, 800)}
-        height={400}
-        data={data}
-        margin={{ top: 5, right: 20, bottom: 5, left: 0 }}
+        data={chartData}
+        margin={{ top: 5, right: 20, bottom: 5, left: 20 }}
       >
         <CartesianGrid strokeDasharray="3 3" stroke="#ccc" />
-        <XAxis dataKey="name" stroke="#ecfeff" />
-        <YAxis />
+        <XAxis dataKey="name" stroke="#ecfeff" tick={{ fill: '#fff' }} />
+        <YAxis
+          tick={{ fill: '#fff' }}
+          domain={[minPrice > 0 ? Math.floor(minPrice * 0.9) : 0, Math.floor(maxPrice * 1.1)]}
+          tickFormatter={(value) => {
+            if (value >= 1000) {
+              return `$${(value / 1000).toFixed(1)}k`;
+            }
+            return `$${value}`;
+          }}
+          width={80}
+        />
+        <Tooltip
+          contentStyle={{
+            backgroundColor: '#2D3748',
+            borderColor: '#4A5568',
+            color: '#fff',
+          }}
+          formatter={(value) => [`$${value}`, 'Price']}
+        />
         <Legend />
-        <Tooltip />
-        <Line type="monotone" dataKey="sales" stroke="#8884d8" />
+        <Line
+          type="monotone"
+          dataKey="price"
+          stroke="#8884d8"
+          strokeWidth={2}
+          activeDot={{ r: 8 }}
+        />
       </LineChart>
-    </Box>
+    </ResponsiveContainer>
   );
 }
-
-const data = [
-  { name: 'Jan', sales: 1000 },
-  { name: 'Ali', sales: 6000 },
-  { name: 'Reza', sales: 2000 },
-  { name: 'Ahmad', sales: 5000 },
-];
 
 export default Chart;
