@@ -2,6 +2,8 @@ import { Request, Response } from "express";
 import { User } from "../models/user";
 import { Follow } from "../models/follow";
 import { Item } from "../models/item";
+import bcrypt from "bcrypt";
+
 // import jwt from "jsonwebtoken";
 // import redisClient from "../DB/redisClient";
 // import { userKey } from "../utils/keys";
@@ -62,7 +64,7 @@ export const updateUser = async (
     }
 
     user.username = name || user.username;
-    user.password = password || user.password;
+    user.password = await bcrypt.hash(password, 10) || user.password;
     user.email = email || user.email;
     Object.assign(user, optionalFields);
 
@@ -102,7 +104,7 @@ export const getUserFollowers = async (
   res: Response
 ): Promise<Response> => {
   try {    
-    const userId = parseInt(req.body.userId);
+    const userId = parseInt(req.params.userId);
 
     const userFollowers = await User.findByPk(userId, {
       include: [

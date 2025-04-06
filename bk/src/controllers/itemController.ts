@@ -25,7 +25,7 @@ export const createItem = async (
     const newItem = await Item.create({
       userId,
       name,
-      description,
+      description, // its in minute
       price,
       pic,
       duration,
@@ -141,9 +141,13 @@ export const likeItem = async (
 
     if (like) {
       await like.destroy();
+      item.likes -= 1;
+      await item.save();
       return res.status(200).json({ message: "Item unliked successfully" });
     } else {
       await Like.create({ userId, itemId });
+      item.likes += 1;
+      await item.save();
       return res.status(201).json({ message: "Item liked successfully" });
     }
   } catch (error: any) {
@@ -204,7 +208,14 @@ export const getItems = async (
   res: Response
 ): Promise<Response> => {
   try {
-    const { price, sort = "newest", ending, category, hotness } = req.query;
+    const {
+      price,
+      sort = "newest",
+      ending,
+      category,
+      hotness,
+      userId,
+    } = req.query;
 
     if (!price) {
       return res.status(400).json({ error: "Price range is required." });
@@ -227,12 +238,12 @@ export const getItems = async (
     const order = sortOptions[sort as string] || sortOptions["newest"];
 
     const timeMap: Record<string, number> = {
-      "1h": 1 * 60 * 60 * 1000,
-      "6h": 6 * 60 * 60 * 1000,
-      "3d": 3 * 24 * 60 * 60 * 1000,
-      "1w": 7 * 24 * 60 * 60 * 1000,
-      "2w": 14 * 24 * 60 * 60 * 1000,
-      "1m": 30 * 24 * 60 * 60 * 1000,
+      "1h": 1 * 60,
+      "6h": 6 * 60,
+      "3d": 3 * 24 * 60,
+      "1w": 7 * 24 * 60,
+      "2w": 14 * 24 * 60,
+      "1m": 30 * 24 * 60,
     };
 
     let endingFilter = {};
@@ -272,13 +283,44 @@ export const getItems = async (
           order: [["createdAt", "DESC"]],
           limit: 1, // Get the latest bid
         },
+        {
+          model: User,
+          attributes: ["id", "pic", "username"],
+          ...(userId && {
+            include: [
+              {
+                model: User,
+                as: "followers",
+                where: { id: userId },
+                required: false,
+                attributes: ["id"],
+                through: { attributes: [] },
+              },
+            ],
+          }),
+        },
       ],
       order: [order],
     });
 
-    // Filter items based on last bid price range
-    const filteredItems = items.filter((item) => {
-      const lastBid = (item as any).bids?.[0]?.price || item.price;
+    // Process items to add isFollowing flag (only if userId was provided)
+    const processedItems = items.map((item) => {
+      const itemData = item.toJSON();
+      if (userId) {
+        itemData.isFollowing = item.user.followers?.length > 0 || false;
+      }
+
+      // Remove the followers array from the response
+      if (itemData.user) {
+        delete itemData.user.followers;
+      }
+
+      return itemData;
+    });
+
+    // Filter items based on price range
+    const filteredItems = processedItems.filter((item) => {
+      const lastBid = item.bids?.[0]?.price || item.price;
       return lastBid >= priceMin && lastBid <= priceMax;
     });
 

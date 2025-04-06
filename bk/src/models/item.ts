@@ -29,7 +29,7 @@ export class Item extends Model {
   likes!: number;
 
   @Column({ type: DataType.INTEGER, allowNull: false })
-  duration!: number;
+  duration!: number; // minute
 
   @Column({
     type: DataType.ENUM,
