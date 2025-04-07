@@ -169,7 +169,7 @@ export const getUserItems = async (
   res: Response
 ): Promise<Response> => {
   try {
-    const {userId} = req.body;
+    const {userId} = req.params;
     const user = await User.findByPk(userId, {
       include: [
         {
