@@ -22,11 +22,15 @@ import { Field } from '../components/ui/field';
 import { InputGroup } from '../components/ui/input-group';
 import { FaRegEye, FaRegEyeSlash } from 'react-icons/fa';
 import { useGetUser, usePostUserInfo } from '../http/useHttp';
+import { toaster } from '../components/ui/toaster';
 
 const formSchema = z.object({
   name: z.string().min(1, 'Name is required.'),
   email: z.string().email('Invalid email format.'),
-  password: z.string().min(6, 'Password must be at least 6 characters long.'),
+  password: z.union([
+    z.string().min(6, 'Password must be at least 6 characters long.'),
+    z.literal(''),
+  ]),
   pic: z.string().optional().nullable(),
   birthDate: z
     .string()
@@ -41,7 +45,7 @@ const formSchema = z.object({
 });
 
 function CompleteInfo() {
-  const userId = localStorage.getItem('userId');
+  const userId = sessionStorage.getItem('userId');
   const [showPassword, setShowPassword] = useState(false);
   const {
     control,
@@ -62,16 +66,33 @@ function CompleteInfo() {
   } = usePostUserInfo(userId);
 
   useEffect(() => {
-    if (data && isSuccess) {
+    if (data) {
+      toaster.success({title: "data successfully loaded"})
       Object.keys(data).forEach((key) => {
-        // Ensure education is properly initialized
         const value = key === 'education' ? data[key] || null : data[key];
-        setValue(key, value || "");
+        if (key === 'password') return;
+        setValue(key, value || '');
       });
+      if(data.pic) sessionStorage.setItem("pic", data.pic)
     }
   }, [data, isSuccess, setValue]);
 
   const onSubmit = (formData) => {
+    const userId = sessionStorage.getItem("userId")
+    if (!userId) {
+      toaster.error({
+        title: 'user not found. Please log in again',
+        description: (
+          <Button
+            onClick={() => navigate('/login')}
+            variant={'solid'}
+            colorPalette={'white'}
+          >
+            Login
+          </Button>
+        ),
+      });
+    }
     try {
       if (formData?.pic) z.string().url().parse(formData.pic);
     } catch (err) {
@@ -114,7 +135,8 @@ function CompleteInfo() {
             <Spinner size={'lg'} borderWidth={'3px'} color={'cyan'} mt={10} />
           ) : isError || isPostInfoError ? (
             <Heading color={'red'}>
-              {error?.message || postInfoError?.message}
+              {error?.response?.data?.message ||
+                postInfoError?.response?.data?.message}
             </Heading>
           ) : (
             <form onSubmit={handleSubmit(onSubmit)}>

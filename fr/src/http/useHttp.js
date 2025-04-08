@@ -43,12 +43,12 @@ export const useSignup = () =>
       }),
   });
 
-export const useGetItem = (query) => {
+export const useGetItem = (query, userId) => {
   return useQuery({
     queryKey: ['item'],
     queryFn: async () =>
       await sendHttp({
-        endpoint: `/api/items?${query}`,
+        endpoint: `/api/items?${query}${userId ? `&userId=${userId}` : ''}`,
         method: 'GET',
       }),
   });
@@ -67,7 +67,7 @@ export const useAddItem = () =>
 
 export const useGetItembyId = (id) =>
   useQuery({
-    queryKey: ['itemById'],
+    queryKey: ['itemById', id],
     queryFn: () =>
       sendHttp({
         endpoint: `/api/items/${id}`,
@@ -157,7 +157,7 @@ export const useSearchItem = (text) =>
     queryFn: () => {
       console.log(text);
       return sendHttp({
-        endpoint: `/api/item/search?searchQuery=${text}`,
+        endpoint: `/api/items/search?searchQuery=${text}`,
         method: 'GET',
       });
     },
@@ -165,7 +165,7 @@ export const useSearchItem = (text) =>
 
 export const useGetUser = (id) =>
   useQuery({
-    queryKey: ['user', id],
+    queryKey: ['user'],
     queryFn: () =>
       sendHttp({
         endpoint: `/api/users/${id}`,
@@ -173,19 +173,62 @@ export const useGetUser = (id) =>
       }),
   });
 
-export const usePostUserInfo = (id) =>
+export const usePostUserInfo = () =>
   useMutation({
     mutationFn: (body) =>
       sendHttp({
-        endpoint: `/api/users/?id=${id}`,
-        method: 'POST',
+        endpoint: `/api/users/`,
+        method: 'PUT',
         body,
       }),
     onSuccess: () => {
       const queryClient = getQueryClient();
-      queryClient.invalidateQueries(['user', id]);
+      queryClient.invalidateQueries(['user']);
     },
   });
+
+export const useGetFollowers = (userId) =>
+  useQuery({
+    queryKey: ['follower'],
+    queryFn: () =>
+      sendHttp({
+        endpoint: `/api/users/follower/${userId}`,
+        method: 'GET',
+      }),
+  });
+
+export const useFollowUser = () =>
+  useMutation({
+    mutationKey: ['follow'],
+    mutationFn: (user) =>
+      sendHttp({
+        endpoint: `/api/users/follow/${user}`,
+        method: 'POST',
+      }),
+    onSuccess: () => {
+      getQueryClient().invalidateQueries(['follower']);
+    },
+  });
+
+export const useLogout = () =>
+  useMutation({
+    mutationFn: () =>
+      sendHttp({
+        endpoint: '/api/auth/logout',
+        method: 'POST',
+      }),
+  });
+
+export const useGetUserItems = (id) =>
+  useQuery({
+    queryKey: ['userItem'],
+    queryFn: () => 
+      sendHttp({
+        endpoint: `/api/users/items/${id}`,
+        method:"GET"
+      })
+  })
+
 // export const usePageRelation = () =>
 //   useMutation({
 //     mutationFn: (body) => {

@@ -22,7 +22,7 @@ import { useDashboardData, useDeleteItem } from '../http/useHttp';
 import { Toaster, toaster } from '../components/ui/toaster';
 
 function UserDashboard() {
-  const userId = localStorage.getItem('userId');
+  const userId = sessionStorage.getItem('userId');
   const navigate = useNavigate();
   const [selection, setSelection] = useState([]);
   const {

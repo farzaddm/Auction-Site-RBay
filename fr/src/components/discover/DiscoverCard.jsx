@@ -11,17 +11,17 @@ import {
 import { FaHeart } from 'react-icons/fa';
 import DiscoverUserFlag from './DiscoverUserFlag';
 import { useNavigate } from 'react-router-dom';
-import { Skeleton } from '../ui/skeleton';
-import dateFormatter from '../../query_client/dateReformater';
 
 function DiscoverCard({
-  category, 
+  category,
   likes,
   isHot,
   image,
   title,
   userImage,
+  isFollowed,
   id,
+  userId,
   userName,
   isLiked,
   expire,
@@ -29,7 +29,6 @@ function DiscoverCard({
   price,
 }) {
   const navigate = useNavigate();
-  const formattedDate = dateFormatter(expire)
 
   return (
     <Flex
@@ -39,12 +38,13 @@ function DiscoverCard({
       backgroundColor={'teal.800/85'}
       rounded={'lg'}
       shadow={'sm'}
-      height={"55vh"}
+      height={'55vh'}
       p={4}
     >
       <DiscoverUserFlag
+        isFollowing={isFollowed}
         loading={loading}
-        id={id}
+        userId={userId}
         name={userName}
         image={userImage}
       />
@@ -72,7 +72,7 @@ function DiscoverCard({
       {/* </Skeleton> */}
       {/* <Skeleton loading={loading} h={'3'} mt={1}> */}
       <Text pb={3} textAlign={'start'} color={'whiteAlpha.600'}>
-        {formattedDate}
+        {expire}
       </Text>
       {/* </Skeleton> */}
 

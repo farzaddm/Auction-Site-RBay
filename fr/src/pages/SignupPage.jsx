@@ -53,6 +53,7 @@ function SignupPage() {
     register,
     handleSubmit,
     formState: { isSubmitting, errors },
+    getValues
   } = useForm({
     resolver: zodResolver(signupSchema),
   });
@@ -74,7 +75,8 @@ function SignupPage() {
     if (isSuccess) {
       toaster.success({ title: "Signed up successfully. redirecting..." })
       console.log(data);
-      localStorage.setItem("token", data.token)
+      sessionStorage.setItem("userId", data.userId)
+      sessionStorage.setItem("userName", getValues("username"))
       navigate("/")
     }
   }, [isError, isSuccess]);

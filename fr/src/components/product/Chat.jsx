@@ -1,11 +1,21 @@
-import { Box, Input, Button, Text, VStack, Spinner, Heading } from '@chakra-ui/react';
+import {
+  Box,
+  Input,
+  Button,
+  Text,
+  VStack,
+  Spinner,
+  Heading,
+} from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
 import ChatItem from './ChatItem';
 import { useGetChat, usePostChat } from '../../http/useHttp';
 import { Toaster, toaster } from '../ui/toaster';
+import { useNavigate } from 'react-router-dom';
 
 function Chat({ itemId }) {
   const { data, isLoading, isError, error } = useGetChat(itemId);
+  const navigate = useNavigate()
   const {
     isError: isPostError,
     error: postError,
@@ -15,12 +25,46 @@ function Chat({ itemId }) {
   const [message, setMessage] = useState('');
 
   useEffect(() => {
-    if (isPending) toaster.error({ title: postError.message });
+    if (isPostError) {
+      if (postError.response.status == 401) {
+        toaster.error({
+          title: postError.response.data.error,
+          description: (
+            <Button
+              onClick={() => navigate('/login')}
+              variant={'solid'}
+              colorPalette={'white'}
+            >
+              Login
+            </Button>
+          ),
+        });
+      } else {
+        toaster.error({ title: postError.response.data.error });
+      }
+    }
   }, [isPostError]);
 
   const handleSendMessage = () => {
     if (message.trim() === '') return;
-    const userId = localStorage.getItem('userId');
+    const userId = sessionStorage.getItem('userId');
+    if (!userId) {
+      toaster.create({
+        title: 'Please log in to send chat',
+        description: (
+          <Button
+            onClick={() => navigate('/login')}
+            variant={'solid'}
+            colorPalette={'white'}
+          >
+            Login
+          </Button>
+        ),
+        type: 'warning',
+      });
+      return;
+    }
+
     mutate({ userId, message: message });
     setMessage('');
   };
@@ -43,7 +87,9 @@ function Chat({ itemId }) {
         {isLoading ? (
           <Spinner size={'xl'} color={'teal.500'} borderWidth={'4px'} mt={10} />
         ) : isError ? (
-          <Heading mt={5} color={'red'}>{error.message}</Heading>
+          <Heading mt={5} color={'red'}>
+            {error.message}
+          </Heading>
         ) : (
           <>
             <Box height={400} my={3} overflowY="auto">
@@ -70,7 +116,7 @@ function Chat({ itemId }) {
                 _focus={{ borderColor: 'teal.500' }}
               />
               {isPending ? (
-                <Spinner />
+                <Spinner size={'lg'} />
               ) : (
                 <Button onClick={handleSendMessage} colorScheme="teal" px={6}>
                   Send

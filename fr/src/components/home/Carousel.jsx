@@ -3,6 +3,7 @@ import { IoIosArrowBack, IoIosArrowForward } from 'react-icons/io';
 import { useRef } from 'react';
 import CarouselItem from './CarouselItem';
 import { useGetItem } from '../../http/useHttp';
+import formatTimeLeft from '../../query_client/dateReformater';
 
 export default function Carousel() {
   const scrollContainerRef = useRef(null);
@@ -52,11 +53,11 @@ export default function Carousel() {
         }}
         mx="auto"
         overflow="hidden"
-        backgroundColor={"whiteAlpha.200"}
+        backgroundColor={'whiteAlpha.200'}
         py={6}
         px={9}
-        rounded={"lg"}
-        shadow={"sm"}
+        rounded={'lg'}
+        shadow={'sm'}
       >
         {isLoading ? (
           <Spinner size={'xl'} color={'teal'} borderWidth={'3px'} />
@@ -113,11 +114,11 @@ export default function Carousel() {
                   price={product.price}
                   link={`/product/${product.id}`}
                   key={product.id}
-                  expireDate={product.expire}
+                  expireDate={formatTimeLeft(product.createdAt, product.duration)}
                   image={product.pic}
-                  isLiked={product.isLiked}
-                  likeCount={1000}
-                  title={product.title}
+                  isLiked={product.hotness}
+                  likeCount={product.likes}
+                  title={product.name}
                 />
               ))}
             </Box>
