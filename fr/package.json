@@ -14,8 +14,12 @@
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
     "@hookform/resolvers": "^3.10.0",
+<<<<<<< HEAD
     "@tanstack/react-query": "^5.80.6",
     "axios": "^1.9.0",
+=======
+    "axios": "^1.8.4",
+>>>>>>> 42e340d44b2d024d72b7de9f77c2878d4b4737df
     "framer-motion": "^11.18.2",
     "next-themes": "^0.4.4",
     "react": "^18.3.1",

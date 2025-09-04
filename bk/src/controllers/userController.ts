@@ -64,7 +64,7 @@ export const updateUser = async (
     }
 
     user.username = name || user.username;
-    user.password = await bcrypt.hash(password, 10) || user.password;
+    if(password) user.password = await bcrypt.hash(password, 10);
     user.email = email || user.email;
     Object.assign(user, optionalFields);
 

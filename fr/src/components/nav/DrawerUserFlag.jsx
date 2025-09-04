@@ -32,7 +32,7 @@ function DrawerUserFlag({ name, id, image, loading = true }) {
             textAlign={'left'}
             color={'whiteAlpha.400'}
           >
-            @{id}
+            {id}
           </Heading>
         </Skeleton>
       </Flex>

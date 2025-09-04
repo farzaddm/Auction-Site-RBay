@@ -8,6 +8,7 @@ import {
   Image,
   Input,
   VStack,
+  Spinner,
 } from '@chakra-ui/react';
 import { FaRegHeart, FaHeart } from 'react-icons/fa';
 import { Avatar } from '../components/ui/avatar';
@@ -17,7 +18,7 @@ import { toaster } from '../components/ui/toaster';
 import { useEffect, useRef } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import Chat from '../components/product/Chat';
-import dateFormatter from '../query_client/dateReformater';
+import formatTimeLeft from '../query_client/dateReformater';
 
 function ProductDetail() {
   const { id } = useParams();
@@ -28,6 +29,7 @@ function ProductDetail() {
     isError: isLikeError,
     isPending,
     isSuccess: isLikeSuccess,
+    error: likeError,
     data: likeData,
   } = useLikeItem();
   const {
@@ -46,15 +48,28 @@ function ProductDetail() {
       error.status == 404 && navigate('/');
     }
     if (isLikeError) {
-      toaster.create({ title: 'Error liking the item', type: 'error' });
+      toaster.create({ title: likeError.response.data.error, type: 'error' });
     }
     if (isLikeSuccess && likeData) {
       toaster.success({ title: likeData.message });
     }
     if (isBidError) {
-      toaster.error({
-        title: bidError.response.data.message || 'Error placing bid',
-      });
+      if (bidError.response.status == 401) {
+        toaster.error({
+          title: bidError.response.data.error,
+          description: (
+            <Button
+              onClick={() => navigate('/login')}
+              variant={'solid'}
+              colorPalette={'white'}
+            >
+              Login
+            </Button>
+          ),
+        });
+      } else {
+        toaster.error({ title: bidError.response.data.error });
+      }
     }
     if (isBidSuccess) {
       toaster.success({ title: bidData.message });
@@ -65,15 +80,26 @@ function ProductDetail() {
     isLikeError,
     isLikeSuccess,
     likeData,
-    bidData,
     isBidSuccess,
     isBidError,
   ]);
 
   function handleLikeClick() {
-    const userId = localStorage.getItem('userId');
+    const userId = sessionStorage.getItem('userId');
     if (!userId) {
-      toaster.create({ title: 'Please log in to like items', type: 'warning' });
+      toaster.create({
+        title: 'Please log in to like items',
+        description: (
+          <Button
+            onClick={() => navigate('/login')}
+            variant={'solid'}
+            colorPalette={'white'}
+          >
+            Login
+          </Button>
+        ),
+        type: 'warning',
+      });
       return;
     }
     mutate({ itemId: id, userId });
@@ -81,6 +107,27 @@ function ProductDetail() {
 
   function handlePlaceBidClick() {
     const price = ref.current.value;
+    const userId = sessionStorage.getItem('userId');
+    if (!userId) {
+      toaster.create({
+        title: 'Please log in to place your bid',
+        description: (
+          <Button
+            onClick={() => navigate('/login')}
+            variant={'solid'}
+            colorPalette={'white'}
+          >
+            Login
+          </Button>
+        ),
+        type: 'warning',
+      });
+      return;
+    }
+    if (data?.item.user.id == userId) {
+      toaster.error({ title: "You can't bid on your own product" });
+      return;
+    }
     if (!price) {
       toaster.create({ title: 'Please enter a bid amount', type: 'warning' });
       return;
@@ -187,7 +234,7 @@ function ProductDetail() {
           >
             <Text>High Bid: {data?.item?.price}$</Text>
             <Text>Bids: {data?.bids?.length || 0}</Text>
-            <Text>Ending: {dateFormatter(data?.expire)}</Text>
+            <Text>Ending: {formatTimeLeft(data?.item.expiredTime, data?.item.duration)}</Text>
           </Flex>
 
           <Flex
@@ -205,7 +252,7 @@ function ProductDetail() {
               flex={1}
             />
             {isBidPending ? (
-              <Button isLoading loadingText="Submitting" />
+              <Spinner borderWidth={'4px'} color={'green.400'} />
             ) : (
               <Button onClick={handlePlaceBidClick} colorScheme="teal" px={6}>
                 Submit

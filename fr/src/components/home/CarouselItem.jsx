@@ -13,7 +13,6 @@ function CarouselItem({
   link,
 }) {
   const navigate = useNavigate();
-  const formattedDate = dateFormatter(expireDate);
 
   return (
     <Card.Root
@@ -32,7 +31,7 @@ function CarouselItem({
       />
       <Card.Body gap="2">
         <Card.Title>{title}</Card.Title>
-        <Card.Description>{formattedDate}</Card.Description>
+        <Card.Description>{expireDate}</Card.Description>
         <Card.Description>${parseFloat(price).toFixed(2)}</Card.Description>
       </Card.Body>
       <Card.Footer gap="2">
@@ -52,7 +51,7 @@ function CarouselItem({
             color={isLiked ? 'red.400' : 'gray.400'}
           />
           <Text color="whiteAlpha.700" fontSize="sm" fontWeight="medium">
-            100K
+            {likeCount}
           </Text>
         </Flex>
       </Card.Footer>

@@ -1,20 +1,34 @@
-export default function dateFormatter(dateString) {
-  const targetDate = new Date(dateString);
+export default function formatTimeLeft(createdAt, duration) {
+  const startDate = new Date(createdAt);
+  const endDate = new Date(startDate.getTime() + duration * 60000);
   const now = new Date();
-  const diffTime = targetDate - now;
 
-  if (diffTime <= 0) return 'Expired';
-
-  const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-  const diffHours = Math.floor(diffTime / (1000 * 60 * 60));
-  const diffMonths = Math.floor(diffDays / 30);
-
-  if (diffMonths > 0) {
-    return `${diffMonths} month${diffMonths > 1 ? 's' : ''} left`;
-  } else if (diffDays > 0) {
-    return `${diffDays} day${diffDays > 1 ? 's' : ''} left`;
-  } else {
-    return `${diffHours} hour${diffHours > 1 ? 's' : ''} left`;
+  if (endDate < now) {
+    return 'Expired';
   }
-}
 
+  const diffInMs = endDate - now;
+
+  const diffInMinutes = Math.round(diffInMs / (1000 * 60));
+  const diffInHours = Math.round(diffInMs / (1000 * 60 * 60));
+  const diffInDays = Math.round(diffInMs / (1000 * 60 * 60 * 24));
+  const diffInWeeks = Math.round(diffInDays / 7);
+
+  if (diffInWeeks >= 1) {
+    return `${diffInWeeks} week${diffInWeeks > 1 ? 's' : ''} left`;
+  }
+
+  if (diffInDays >= 1) {
+    return `${diffInDays} day${diffInDays > 1 ? 's' : ''} left`;
+  }
+
+  if (diffInHours >= 1) {
+    return `${diffInHours} hour${diffInHours > 1 ? 's' : ''} left`;
+  }
+
+  if (diffInMinutes >= 1) {
+    return `${diffInMinutes} minute${diffInMinutes > 1 ? 's' : ''} left`;
+  }
+
+  return 'Less than a minute left';
+}

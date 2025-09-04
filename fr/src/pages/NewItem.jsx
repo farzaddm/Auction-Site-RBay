@@ -31,7 +31,7 @@ const formSchema = z.object({
     .string()
     .min(10, 'Description must be at least 10 characters long.')
     .max(250, 'Description must be at most 250 characters long.'),
-  duration: z.string({ message: 'Time duration must be selected.' }).array(),
+  duration: z.number({ message: 'Time duration must be selected.' }).array(),
   price: z
     .number()
     .min(1, { message: 'starting price must be at least 1$' })
@@ -55,8 +55,7 @@ function NewItem() {
   const onSubmit = (data) => {
     const body = {
       name: data.name,
-      duration: 300,
-      // duration: data.duration[0],
+      duration: data.duration[0],
       description: data.description,
       pic: data.pic,
       price: data.price,
@@ -71,7 +70,7 @@ function NewItem() {
       navigate('/');
     }
     if (isError) {
-      toaster.error({ title: error?.message });
+      toaster.error({ title: error.response.data.error });
     }
   }, [isSuccess, isError]);
 
@@ -278,23 +277,21 @@ function NewItem() {
 
 const frameworks = createListCollection({
   items: [
-    { label: 'One Minute', value: 'one minute' },
-    { label: 'Ten Minute', value: 'ten minute' },
-    { label: 'One Day', value: 'one day' },
-    { label: 'One Week', value: 'one week' },
+    { label: 'One Minute', value: 1 },
+    { label: 'Ten Minute', value: 10 },
+    { label: 'One Day', value: 60*24 },
+    { label: 'One Week', value: 60*24*7 },
   ],
 });
 
 const category = createListCollection({
   items: [
     { label: 'Decorative', value: 'decorative' },
-    { label: 'Furniture', value: 'furniture' },
     { label: 'Electronics', value: 'electronics' },
     { label: 'Clothing', value: 'clothing' },
     { label: 'Books', value: 'books' },
     { label: 'Toys', value: 'toys' },
     { label: 'Sports', value: 'sports' },
-    { label: 'Automotive', value: 'automotive' },
   ],
 });
 

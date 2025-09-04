@@ -57,13 +57,12 @@ function LoginPage() {
   useEffect(() => {
     if (isError) {
       toaster.error({
-        description: error.message,
+        description: error.response.data.error,
       });
     }
     if (isSuccess) {
-      localStorage.setItem('token', data.token);
-      localStorage.setItem('userId', data.userId);
-      localStorage.setItem('userName', getValues('username'));
+      sessionStorage.setItem('userId', data.userId);
+      sessionStorage.setItem('userName', getValues('username'));
       toaster.success({ title: 'Logged in successfully. redirecting...' });
       navigate('/');
     }

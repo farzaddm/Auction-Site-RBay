@@ -3,10 +3,12 @@ import DiscoverCard from './DiscoverCard';
 import { useGetItem } from '../../http/useHttp';
 import { useEffect } from 'react';
 import { Toaster, toaster } from '../ui/toaster';
+import formatTimeLeft from '../../query_client/dateReformater';
 
 
 function DiscoverGrid({ queryParam }) {
-  const { data, isLoading, refetch, isError, error } = useGetItem(queryParam);
+  const userId = sessionStorage.getItem("userId")
+  const { data, isLoading, refetch, isError, error } = useGetItem(queryParam, userId || "");
 
   useEffect(() => {
     console.log(queryParam);
@@ -43,16 +45,17 @@ function DiscoverGrid({ queryParam }) {
               price={item.price}
               category={item.category}
               loading={false}
-              expire={item.expire}
+              expire={formatTimeLeft(item.createdAt, item.duration)}
               likes={item.likes}
-              isFollowed={item.isFollowed}
+              isFollowed={item.isFollowing}
               id={item.id}
+              userId={item.user.id}
               image={item.pic}
               isLiked={item.isLiked}
               isHot={item.hotness}
               title={item.name}
-              userImage={item.userImage}
-              userName={item.userName}
+              userImage={item.user.pic}
+              userName={item.user.username}
             />
           ))}
         </Grid>

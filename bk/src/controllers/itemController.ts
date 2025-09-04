@@ -62,6 +62,7 @@ export const getItemById = async (
         "category",
         "hotness",
         "likes",
+        "duration",
         [
           Sequelize.literal(
             "DATE_ADD(Item.createdAt, INTERVAL Item.duration SECOND)"
