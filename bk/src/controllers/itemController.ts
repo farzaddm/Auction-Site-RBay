@@ -203,7 +203,6 @@ export const bidOnItem = async (
   }
 };
 
-// get items by sort
 export const getItems = async (
   req: Request,
   res: Response
@@ -248,17 +247,19 @@ export const getItems = async (
     };
 
     let endingFilter = {};
+    let futureDate: Date | null = null; // Declare futureDate here
+
     if (ending && timeMap[ending as string]) {
       const now = new Date();
       const futureTimeInSeconds = timeMap[ending as string];
-      const futureDate = new Date(now.getTime() + futureTimeInSeconds * 1000);
+      futureDate = new Date(now.getTime() + futureTimeInSeconds * 60 * 1000);
 
       // Filtering items that will expire within "futureTime"
       endingFilter = {
         [Op.and]: [
-          { createdAt: { [Op.lte]: now } }, // Ensure item is already created
+          Sequelize.literal('`Item`.`createdAt` <= :now'),
           Sequelize.literal(
-            `DATE_ADD(createdAt, INTERVAL duration SECOND) <= '${futureDate.toISOString()}'`
+            `DATE_ADD(\`Item\`.\`createdAt\`, INTERVAL \`Item\`.\`duration\` SECOND) <= :futureDate`
           ),
         ],
       };
@@ -270,7 +271,7 @@ export const getItems = async (
     // Hotness filter
     const hotnessFilter = hotness ? { hotness: hotness === "true" } : {};
 
-    // Get items
+    // Get items with replacements for literal values
     const items = await Item.findAll({
       where: {
         ...categoryFilter,
@@ -302,6 +303,10 @@ export const getItems = async (
         },
       ],
       order: [order],
+      replacements: {
+        now: new Date(),
+        futureDate: futureDate ? futureDate.toISOString() : null
+      },
     });
 
     // Process items to add isFollowing flag (only if userId was provided)
@@ -325,13 +330,14 @@ export const getItems = async (
       return lastBid >= priceMin && lastBid <= priceMax;
     });
 
+    console.log(filteredItems);
+
     return res.json(filteredItems);
   } catch (error) {
     console.error("Error fetching items:", error);
     return res.status(500).json({ error: "Internal server error." });
   }
 };
-
 export const dashboard = async (
   req: Request,
   res: Response
