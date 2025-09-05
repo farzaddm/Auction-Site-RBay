@@ -14,12 +14,8 @@
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
     "@hookform/resolvers": "^3.10.0",
-<<<<<<< HEAD
     "@tanstack/react-query": "^5.80.6",
     "axios": "^1.9.0",
-=======
-    "axios": "^1.8.4",
->>>>>>> 42e340d44b2d024d72b7de9f77c2878d4b4737df
     "framer-motion": "^11.18.2",
     "next-themes": "^0.4.4",
     "react": "^18.3.1",
@@ -27,7 +23,7 @@
     "react-hook-form": "^7.54.2",
     "react-icons": "^5.4.0",
     "react-router-dom": "^7.1.1",
-    "recharts": "^2.15.1",]
+    "recharts": "^2.15.1",
     "zod": "^3.24.1"
   },
   "devDependencies": {

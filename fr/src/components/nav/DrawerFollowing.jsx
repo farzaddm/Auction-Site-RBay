@@ -41,7 +41,7 @@ function DrawerFollowing() {
   }, [isError, error, data]);
   return (
     <>
-      <Heading size={'lg'} textAlign={'left'}>
+      {/* <Heading size={'lg'} textAlign={'left'}>
         Followers List
       </Heading>
       <Stack
@@ -66,7 +66,7 @@ function DrawerFollowing() {
         ) : (
           <Text>No followers found</Text>
         )}
-      </Stack>
+      </Stack> */}
     </>
   );
 }
