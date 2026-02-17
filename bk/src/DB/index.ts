@@ -23,12 +23,28 @@ const sequelize = new Sequelize({
 });
 
 
-export const syncDatabase = async() => {
-  try {
-    await sequelize.sync({ alter: true }); // Use `alter: true` to create tables just if they are not already exists
-    console.log("Database synchronized successfully!");
-  } catch (error) {
-    console.error("Failed to synchronize database:", error);
+// export const syncDatabase = async() => {
+//   try {
+//     await sequelize.sync({ alter: true }); // Use `alter: true` to create tables just if they are not already exists
+//     console.log("Database synchronized successfully!");
+//   } catch (error) {
+//     console.error("Failed to synchronize database:", error);
+//   }
+// }
+export const syncDatabase = async () => {
+  let retries = 3;
+
+  while (retries) {
+    try {
+      await sequelize.sync({ alter: true });
+      console.log("Database synchronized successfully!");
+      break;
+    } catch (error) {
+      console.log("Database not ready, retrying in 5 seconds...");
+      retries -= 1;
+      await new Promise((res) => setTimeout(res, 5000));
+    }
   }
-}
+};
+
 
