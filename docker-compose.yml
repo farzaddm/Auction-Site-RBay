@@ -1,0 +1,28 @@
+version: "3.9"
+services:
+  rbay-db:
+    image: mysql:latest
+    environment:
+      - MYSQL_ROOT_PASSWORD=1234
+      - MYSQL_DATABASE=auction
+    volumes:
+      - db:/var/lib/mysql
+  
+  rbay-fr:
+    # image: rbay-front
+    build: ./fr
+    ports:
+      - 5173:80
+    
+  rbay-bk:
+    # image: rbay-back
+    build: .
+    env_file:
+      - .env
+    ports:
+      - 3000:3000
+    depends_on:
+      - rbay-db
+
+volumes:
+  db:
